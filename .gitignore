@@ -1,0 +1,16 @@
+*~
+*.swp
+*.pyc
+bin
+eggs
+parts
+.installed.cfg
+.mr.developer.cfg
+*.egg-info
+develop-eggs
+sphinx
+dist
+.project
+.pydevproject
+build
+*.so

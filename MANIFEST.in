@@ -1,0 +1,2 @@
+include README.rst *.cfg bootstrap.py
+recursive-include xbob *.cpp *.h
