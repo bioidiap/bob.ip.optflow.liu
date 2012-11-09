@@ -39,8 +39,8 @@ def load_and_grayscale_images(l):
 
   retval = [bob.io.load(k) for k in l]
   for i, k in enumerate(retval):
-    if k.shape[0] == 3: retval[i] = bob.ip.rgb_to_gray(k)
-    elif k.shape[0] != 2:
+    if k.ndim == 3: retval[i] = bob.ip.rgb_to_gray(k)
+    elif k.ndim != 2:
       raise RuntimeError, "Input image file `%s' does not have 2 or 3 planes in first dimension - is it an image at all?" % l[i]
 
   return retval
@@ -96,11 +96,12 @@ def main():
 
     for index, (i1, i2) in enumerate(zip(input[:-1], input[1:])):
       if args.verbose:
-        import ipdb; ipdb.set_trace()
-        sys.stdout.write('%s -> %s\n' % args.input[index:index+2])
+        sys.stdout.write('%s -> %s\n' % tuple(args.input[index:index+2]))
         sys.stdout.flush()
-      flows.append(flow(i1, i2))
+      flows.append(flow(i1, i2)[0:2])
 
   if args.verbose:
     sys.stdout.write('Saving flows to %s\n' % args.output)
     sys.stdout.flush()
+
+  bob.io.save(flows, args.output)
