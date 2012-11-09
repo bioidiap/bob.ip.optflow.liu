@@ -5,6 +5,10 @@
 
 """Estimates the optical flow between images or in a video
 
+This variant does not use the Successive Over-Relaxation (SOR) that was
+implemented on August 1st., 2011 by C. Liu, but the old version based on
+Conjugate-Gradient (CG).
+
 This program will dump a single output HDF5 file that contains a 3D double
 array with two planes. Each plane matches the size of the image or video input.
 The first plane corresponds to the output of the flow estimation along the
@@ -71,7 +75,7 @@ def main(user_input=None):
 
   parser.add_argument('-i', '--inner-fp-iterations', metavar='N', dest='inner', default=1, type=int, help="The number of inner fixed-point iterations (defaults to %(default)s)")
 
-  parser.add_argument('-s', '--sor-iterations', metavar='N', dest='sor', default=20, type=int, help="The number of SOR iterations (defaults to %(default)s)")
+  parser.add_argument('-c', '--cg-iterations', metavar='N', dest='cg', default=20, type=int, help="The number of CG iterations (defaults to %(default)s)")
 
   from ..version import __version__
   name = os.path.basename(os.path.splitext(sys.argv[0])[0])
@@ -97,7 +101,7 @@ def main(user_input=None):
       if exc.errno == errno.EEXIST: pass
       else: raise
 
-  from .. import flow, grayscale_double
+  from .. import old_flow, grayscale_double
 
   flows = []
   if len(args.input) == 1: #assume this is a video sequence
@@ -128,8 +132,8 @@ def main(user_input=None):
       if args.verbose:
         sys.stdout.write('.')
         sys.stdout.flush()
-      flows.append(flow(i1, i2, args.alpha, args.ratio, args.min_width,
-        args.outer, args.inner, args.sor)[0:2])
+      flows.append(old_flow(i1, i2, args.alpha, args.ratio, args.min_width,
+        args.outer, args.inner, args.cg)[0:2])
 
     if args.verbose:
       sys.stdout.write('\n')
@@ -144,8 +148,8 @@ def main(user_input=None):
       if args.verbose:
         sys.stdout.write('%s -> %s\n' % tuple(args.input[index:index+2]))
         sys.stdout.flush()
-      flows.append(flow(i1, i2, args.alpha, args.ratio, args.min_width,
-        args.outer, args.inner, args.sor)[0:2])
+      flows.append(old_flow(i1, i2, args.alpha, args.ratio, args.min_width,
+        args.outer, args.inner, args.cg)[0:2])
 
     if len(input) == 2: #special case, dump simple
       flows = flows[0]

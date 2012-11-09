@@ -118,6 +118,7 @@ setup(
     entry_points = {
       'console_scripts': [
         'optflow_liu.py = xbob.optflow.liu.script.flow:main',
+        'optflow_old_liu.py = xbob.optflow.liu.script.old_flow:main',
         ],
       },
 
@@ -128,7 +129,13 @@ setup(
           "xbob/optflow/liu/ext/OpticalFlow.cpp",
           "xbob/optflow/liu/ext/GaussianPyramid.cpp",
           "xbob/optflow/liu/ext/Stochastic.cpp",
-        ])
+        ]),
+      setup_bob_extension("xbob.optflow.liu._liu_old",
+        [
+          "xbob/optflow/liu/ext_old/ext.cpp",
+          "xbob/optflow/liu/ext_old/OpticalFlow.cpp",
+          "xbob/optflow/liu/ext_old/GaussianPyramid.cpp",
+        ]),
       ],
 
     classifiers = [

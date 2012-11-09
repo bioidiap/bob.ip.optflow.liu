@@ -1,4 +1,5 @@
 from ._liu import flow
+from ._liu_old import flow as old_flow
 
 def grayscale_double(a):
   """Grayscales and prepares the input array to be treated by the Optical Flow

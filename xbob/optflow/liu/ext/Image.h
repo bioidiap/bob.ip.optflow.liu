@@ -420,15 +420,12 @@ public:
 	template <class T1>
 	void LoadMatlabImageCore(const mxArray* image,bool IsImageScaleCovnersion=true);
 
-	template <class T1>
-	void ConvertFromMatlab(const T1* pMatlabPlane,int _width,int _height,int _nchannels);
-
 	void OutputToMatlab(mxArray*& matrix) const;
-
-	template <class T1>
-	void ConvertToMatlab(T1* pMatlabPlane) const;
 #endif
 	
+	template <class T1> void ConvertFromMatlab(const T1* pMatlabPlane,int _width,int _height,int _nchannels);
+
+	template <class T1> void ConvertToMatlab(T1* pMatlabPlane) const;
 };
 
 
@@ -2699,31 +2696,6 @@ bool Image<T>::LoadMatlabImage(const mxArray* matrix,bool IsImageScaleCovnersion
 
 
 template <class T>
-template <class T1>
-void Image<T>::ConvertFromMatlab(const T1 *pMatlabPlane, int _width, int _height, int _nchannels)
-{
-	if(imWidth!=_width || imHeight!=_height || nChannels!=_nchannels)
-		allocate(_width,_height,_nchannels);
-	int offset=0;
-	for(int i=0;i<imHeight;i++)
-		for(int j=0;j<imWidth;j++)
-			for(int k=0;k<nChannels;k++)
-				pData[offset++]=pMatlabPlane[k*nPixels+j*imHeight+i];
-}
-
-// convert image data to matlab matrix
-template <class T>
-template <class T1>
-void Image<T>::ConvertToMatlab(T1 *pMatlabPlane) const
-{
-	int offset=0;
-	for(int i=0;i<imHeight;i++)
-		for(int j=0;j<imWidth;j++)
-			for(int k=0;k<nChannels;k++)
-				pMatlabPlane[k*nPixels+j*imHeight+i]=pData[offset++];
-}
-
-template <class T>
 void Image<T>::OutputToMatlab(mxArray *&matrix) const
 {
 	int dims[3];
@@ -2754,4 +2726,27 @@ void Image<T>::OutputToMatlab(mxArray *&matrix) const
 
 #endif
 
+template <class T>
+template <class T1>
+void Image<T>::ConvertFromMatlab(const T1 *pMatlabPlane, int _width, int _height, int _nchannels)
+{
+	if(imWidth!=_width || imHeight!=_height || nChannels!=_nchannels)
+		allocate(_width,_height,_nchannels);
+	int offset=0;
+	for(int i=0;i<imHeight;i++)
+		for(int j=0;j<imWidth;j++)
+			for(int k=0;k<nChannels;k++)
+				pData[offset++]=pMatlabPlane[k*nPixels+j*imHeight+i];
+}
 
+// convert image data to matlab matrix
+template <class T>
+template <class T1>
+void Image<T>::ConvertToMatlab(T1 *pMatlabPlane) const
+{
+	int offset=0;
+	for(int i=0;i<imHeight;i++)
+		for(int j=0;j<imWidth;j++)
+			for(int k=0;k<nChannels;k++)
+				pMatlabPlane[k*nPixels+j*imHeight+i]=pData[offset++];
+}
