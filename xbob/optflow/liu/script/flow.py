@@ -124,7 +124,8 @@ def main(user_input=None):
       if args.verbose:
         sys.stdout.write('.')
         sys.stdout.flush()
-      flows.append(flow(i1, i2)[0:2])
+      flows.append(flow(i1, i2, args.alpha, args.ratio, args.min_width,
+        args.outer, args.inner, args.sor)[0:2])
 
     if args.verbose:
       sys.stdout.write('\n')
@@ -139,7 +140,8 @@ def main(user_input=None):
       if args.verbose:
         sys.stdout.write('%s -> %s\n' % tuple(args.input[index:index+2]))
         sys.stdout.flush()
-      flows.append(flow(i1, i2)[0:2])
+      flows.append(flow(i1, i2, args.alpha, args.ratio, args.min_width,
+        args.outer, args.inner, args.sor)[0:2])
 
     if len(input) == 2: #special case, dump simple
       flows = flows[0]
