@@ -84,10 +84,9 @@ Usage
 Pretty simple, just do something like::
 
   import bob
-  from xbob.optflow import liu
+  from xbob.optflow.liu import flow
+  ...
+  (u, v, warped) = flow(image1, image2)
 
-  video = bob.io.VideoReader('myvideo.avi')
-  estimate = liu.Estimator()
-
-  for frame in video:
-    print localize(frame)
+The ``flow`` method accepts more parameters. Please refer to its built-in
+documentation for details.
