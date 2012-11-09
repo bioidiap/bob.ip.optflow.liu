@@ -33,7 +33,7 @@ static tuple coarse2fine_flow (
     double alpha=1.0,
     double ratio=0.5, 
     int minWidth=40, 
-    int nOuterFPIterations=3, 
+    int nOuterFPIterations=4, 
     int nInnerFPIterations=1,
     int nSORIterations=20
     ) {
@@ -89,7 +89,7 @@ BOOST_PYTHON_MODULE(_liu) {
           boost::python::arg("alpha")=1.0, 
           boost::python::arg("ratio")=0.5, 
           boost::python::arg("min_width")=40, 
-          boost::python::arg("n_outer_fp_iterations")=3, 
+          boost::python::arg("n_outer_fp_iterations")=4, 
           boost::python::arg("n_inner_fp_iterations")=1,
           boost::python::arg("n_sor_iterations")=20), 
         "Computes dense optical flow field in a coarse to fine manner\n"
@@ -109,8 +109,6 @@ BOOST_PYTHON_MODULE(_liu) {
         "  [optional] Width of the coarsest level\n"
         "n_outer_fp_iterations\n"
         "  [optional] The number of outer fixed point iterations\n"
-        "n_inner_fp_iterations\n"
-        "  [optional] The number of inner fixed point iterations\n"
         "n_inner_fp_iterations\n"
         "  [optional] The number of inner fixed point iterations\n"
         "n_sor_iterations\n"

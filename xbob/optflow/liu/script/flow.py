@@ -33,19 +33,7 @@ import os
 import sys
 import bob
 
-def load_and_grayscale_images(l):
-  """Loads and grayscales all input images in the list
-  """
-
-  retval = [bob.io.load(k) for k in l]
-  for i, k in enumerate(retval):
-    if k.ndim == 3: retval[i] = bob.ip.rgb_to_gray(k)
-    elif k.ndim != 2:
-      raise RuntimeError, "Input image file `%s' does not have 2 or 3 planes in first dimension - is it an image at all?" % l[i]
-
-  return retval
-
-def main():
+def main(user_input=None):
 
   import argparse
 
@@ -61,12 +49,28 @@ def main():
   parser.add_argument('-v', '--verbose', default=False, action='store_true',
       help="Increases the output verbosity level")
 
+  parser.add_argument('-a', '--alpha', dest='alpha', default=1.0, type=float, metavar='FLOAT', help="Regularization weight (defaults to %(default)s)")
+
+  parser.add_argument('-r', '--ratio', dest='ratio', default=0.5, type=float, metavar='FLOAT', help="Downsample ratio (defaults to %(default)s)")
+
+  parser.add_argument('-m', '--min-width', dest='min_width', default=40, 
+      type=int, metavar='N', help="Width of the coarsest level (defaults to %(default)s)")
+
+  parser.add_argument('-o', '--outer-fp-iterations', metavar='N', dest='outer', default=4, type=int, help="The number of outer fixed-point iterations (defaults to %(default)s)")
+
+  parser.add_argument('-i', '--inner-fp-iterations', metavar='N', dest='inner', default=1, type=int, help="The number of inner fixed-point iterations (defaults to %(default)s)")
+
+  parser.add_argument('-s', '--sor-iterations', metavar='N', dest='sor', default=20, type=int, help="The number of SOR iterations (defaults to %(default)s)")
+
   from ..version import __version__
   name = os.path.basename(os.path.splitext(sys.argv[0])[0])
   parser.add_argument('-V', '--version', action='version',
       version='Optical Flow Estimation Tool v%s (%s)' % (__version__, name))
 
-  args = parser.parse_args()
+  # secret option to limit the number of video frames to run for (test option)
+  parser.add_argument('--video-frames', dest='frames', type=int, help=argparse.SUPPRESS)
+
+  args = parser.parse_args(args=user_input)
 
   for i in args.input:
     if not os.path.exists(i):
@@ -82,17 +86,43 @@ def main():
       if exc.errno == errno.EEXIST: pass
       else: raise
 
-  from .. import flow
+  from .. import flow, grayscale_double
 
   flows = []
   if len(args.input) == 1: #assume this is a video sequence
 
-    pass
+    if args.frames:
+
+      if args.verbose:
+        sys.stdout.write('Loading only %d frames from %s...' % \
+            (args.frames, args.input[0]))
+        sys.stdout.flush()
+
+      input = [grayscale_double(k) for k in
+          bob.io.VideoReader(args.input[0])[:args.frames]]
+
+    else:
+
+      if args.verbose:
+        sys.stdout.write('Loading all frames from %s...' % args.input[0])
+        sys.stdout.flush()
+
+      input = [grayscale_double(k) for k in bob.io.load(args.input[0])]
+
+    for index, (i1, i2) in enumerate(zip(input[:-1], input[1:])):
+      if args.verbose:
+        sys.stdout.write('.')
+        sys.stdout.flush()
+      flows.append(flow(i1, i2)[0:2])
+
+    if args.verbose:
+      sys.stdout.write('\n')
+      sys.stdout.flush()
 
   else: #assume the user has given us N images
 
     # gray scale every one
-    input = load_and_grayscale_images(args.input)
+    input = [grayscale_double(bob.io.load(k)) for k in args.input]
 
     for index, (i1, i2) in enumerate(zip(input[:-1], input[1:])):
       if args.verbose:
@@ -100,8 +130,13 @@ def main():
         sys.stdout.flush()
       flows.append(flow(i1, i2)[0:2])
 
+    if len(input) == 2: #special case, dump simple
+      flows = flows[0]
+
   if args.verbose:
     sys.stdout.write('Saving flows to %s\n' % args.output)
     sys.stdout.flush()
 
   bob.io.save(flows, args.output)
+
+  return 0
