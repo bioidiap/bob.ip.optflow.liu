@@ -16,6 +16,17 @@ The input may be composed of a single input video or an image sequence. In case
 the input is composed of a set of input images, the images **must** be of the
 same size. The output is an HDF5 file that contains the flow estimations
 between every 2 consecutive images in the input data.
+
+If you use the results of this script, please consider citing Liu's thesis and
+Bob, as the core framework for this port:
+
+  Ce Liu, Beyond Pixels: Exploring New Representations and Applications for
+  Motion Analysis, Massachusetts Institute of Technology, 2009.
+
+  A. Anjos, L. El-Shafey, R. Wallace, M. Guenther, C. McCool and S. Marcel,
+  Bob: a free signal processing and machine learning toolbox for researchers,
+  20th ACM Conference on Multimedia Systems (ACMMM), Nara, Japan}, October,
+  2012
 """
 
 __epilog__ = """Usage Example:

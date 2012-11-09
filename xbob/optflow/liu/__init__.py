@@ -8,5 +8,4 @@ def grayscale_double(a):
   from bob.ip import rgb_to_gray
 
   if a.ndim == 3: a = rgb_to_gray(a)
-  #return convert(a, 'float64', (0,1))
   return a.astype('float64')/255.
