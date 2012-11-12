@@ -75,16 +75,16 @@ def pkgconfig(package):
 
   return kw
 
-def setup_bob_extension(ext_name, sources):
+def setup_bob_extension(ext_name, dir, sources):
   """Sets up a given C++ extension that depends on Bob"""
 
   bob = pkgconfig('bob-python')
 
   return Extension(
       ext_name,
-      sources=sources,
+      sources=[os.path.join(dir, k) for k in sources],
       language="c++",
-      include_dirs=bob.get('include_dirs',[]) + ['xbob/optflow/liu/ext'],
+      include_dirs=bob.get('include_dirs',[]) + [dir],
       library_dirs=bob.get('library_dirs',[]),
       runtime_library_dirs=bob.get('library_dirs',[]),
       libraries=bob.get('libraries',[]),
@@ -124,17 +124,19 @@ setup(
 
     ext_modules=[
       setup_bob_extension("xbob.optflow.liu._liu",
+        'xbob/optflow/liu/ext',
         [
-          "xbob/optflow/liu/ext/ext.cpp",
-          "xbob/optflow/liu/ext/OpticalFlow.cpp",
-          "xbob/optflow/liu/ext/GaussianPyramid.cpp",
-          "xbob/optflow/liu/ext/Stochastic.cpp",
+          "ext.cpp",
+          "OpticalFlow.cpp",
+          "GaussianPyramid.cpp",
+          "Stochastic.cpp",
         ]),
       setup_bob_extension("xbob.optflow.liu._liu_old",
+        'xbob/optflow/liu/ext_old',
         [
-          "xbob/optflow/liu/ext_old/ext.cpp",
-          "xbob/optflow/liu/ext_old/OpticalFlow.cpp",
-          "xbob/optflow/liu/ext_old/GaussianPyramid.cpp",
+          "ext.cpp",
+          "OpticalFlow.cpp",
+          "GaussianPyramid.cpp",
         ]),
       ],
 

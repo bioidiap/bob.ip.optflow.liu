@@ -22,7 +22,6 @@ static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
   di.imWidth = bz.extent(1);
   di.imHeight = bz.extent(0);
   di.nChannels = 1;
-  di.colorType = GRAY;
   di.computeDimension();
   di.pData = bz.data();
 }
@@ -32,7 +31,6 @@ static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
  */
 static void bz2dimage(blitz::Array<double,3>& bz, DImage& di) {
   di.clear();
-  di.colorType = RGB;
   di.ConvertFromMatlab<double>(bz.data(), bz.extent(2), bz.extent(1), 
       bz.extent(0));
 }
