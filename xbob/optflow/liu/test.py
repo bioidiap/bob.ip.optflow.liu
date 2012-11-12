@@ -13,9 +13,6 @@ import numpy
 import pkg_resources
 from . import flow, grayscale_double
 
-EXAMPLES = 'example'
-EXAMPLE_URL = 'https://github.com/downloads/bioidiap/xbob.optflow.liu/example-v1.zip'
-
 def F(name, f):
   """Returns the test file on the "data" subdirectory"""
   return pkg_resources.resource_filename(name, os.path.join('data', f))
@@ -24,23 +21,6 @@ INPUT_VIDEO = F('bob.io.test', 'test.mov')
 
 class OpticalFlowLiuTest(unittest.TestCase):
   """Performs various tests on Ce Liu's Optical Flow package"""
-
-  def setUp(self):
-    """Download/check example files"""
-
-    if not os.path.exists(EXAMPLES):
-      print "Get `%s'..." % EXAMPLE_URL
-      import urllib, zipfile, cStringIO
-      zfile = zipfile.ZipFile(cStringIO.StringIO(urllib.urlopen(EXAMPLE_URL).read()))
-      print "Extract `%s'..." % os.path.basename(EXAMPLE_URL)
-      for name in zfile.namelist():
-        if name[-1] == os.sep:
-          if not os.path.exists(name): os.mkdir(name)
-        else:
-          fd = open(name, 'w')
-          fd.write(zfile.read(name))
-          fd.close()
-      print "All done, setup Ok."
 
   def run_for(self, sample):
 
