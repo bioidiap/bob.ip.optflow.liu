@@ -447,20 +447,20 @@ void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const D
 	// first build the pyramid of the two images
 	GaussianPyramid GPyramid1;
 	GaussianPyramid GPyramid2;
-	if(IsDisplay)
-		cout<<"Constructing pyramid...";
+	//if(IsDisplay)
+	//	cout<<"Constructing pyramid...";
 	GPyramid1.ConstructPyramid(Im1,ratio,minWidth);
 	GPyramid2.ConstructPyramid(Im2,ratio,minWidth);
-	if(IsDisplay)
-		cout<<"done!"<<endl;
+	//if(IsDisplay)
+	//	cout<<"done!"<<endl;
 	
 	// now iterate from the top level to the bottom
 	DImage Image1,Image2,WarpImage2;
 
 	for(int k=GPyramid1.nlevels()-1;k>=0;k--)
 	{
-		if(IsDisplay)
-			cout<<"Pyramid level "<<k;
+		//if(IsDisplay)
+		//	cout<<"Pyramid level "<<k;
 		int width=GPyramid1.Image(k).width();
 		int height=GPyramid1.Image(k).height();
 		im2feature(Image1,GPyramid1.Image(k));
@@ -486,8 +486,7 @@ void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const D
 		//SmoothFlowPDE(GPyramid1.Image(k),GPyramid2.Image(k),warpI2,vx,vy,alpha,nOuterFPIterations,nInnerFPIterations,nCGIterations);
 		//SmoothFlowPDE(Image1,Image2,WarpImage2,vx,vy,alpha*pow((1/ratio),k),nOuterFPIterations,nInnerFPIterations,nCGIterations);
 		SmoothFlowPDE(Image1,Image2,WarpImage2,vx,vy,alpha,nOuterFPIterations,nInnerFPIterations,nCGIterations);
-		if(IsDisplay)
-			cout<<endl;
+		//if(IsDisplay) cout<<endl;
 	}
 	warpFL(warpI2,Im1,Im2,vx,vy);
 }
