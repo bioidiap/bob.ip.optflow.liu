@@ -88,7 +88,10 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
 def add_options(parser, alpha, ratio, min_width, outer, inner, iterations, 
     method, variant):
 
-  parser.add_argument('-g', '--gray-scale', dest='gray', default=False, action='store_true', help="Gray-scales input data (if necessary) before feeding it to the flow estimation. This uses Bob's gray scale conversion instead of the Liu's built-in conversion and may lead to slightly different results.")
+  if variant.lower() == 'cg':
+    parser.add_argument('-g', '--gray-scale', dest='gray', default=False, action='store_true', help="Gray-scales input data before feeding it to the flow estimation. This uses Bob's gray scale conversion instead of the Liu's built-in conversion and may lead to slightly different results.")
+  else:
+    parser.set_defaults(gray=True)
 
   parser.add_argument('-a', '--alpha', dest='alpha', default=alpha, type=float, metavar='FLOAT', help="Regularization weight (defaults to %(default)s)")
 
@@ -199,7 +202,7 @@ def main(user_input=None):
     if args.verbose:
       sys.stdout.write('Converting %d frames to grayscale...' % len(input))
       sys.stdout.flush()
-    
+   
     input = [bob.ip.rgb_to_gray(k) for k in input]
   
     if args.verbose:

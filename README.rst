@@ -84,9 +84,28 @@ Usage
 Pretty simple, just do something like::
 
   import bob
-  from xbob.optflow.liu import flow
+  from xbob.optflow.liu import cg_flow
   ...
   (u, v, warped) = flow(image1, image2)
 
-The ``flow`` method accepts more parameters. Please refer to its built-in
+The ``cg_flow`` method accepts more parameters. Please refer to its built-in
 documentation for details.
+
+.. note::
+
+  More recently (in August 2011), Ce Liu introduced a version of the Optical
+  Flow framework using Successive Over-Relaxation (SOR) instead of Conjugate
+  Gradient (CG) for minization. The new framework is presumably faster, but
+  does not give similar results compared to the old CG-based one.
+
+  If you would like to give it a spin, use the method ``sor_flow`` instead of
+  ``cg_flow`` as shown above. Notice that the defaults for both implementations
+  are different, following the defaults pre-set in the Matlab MEX code in the
+  different releases.
+
+  Particularly, avoid feeding colored images to ``sor_flow``. While that works
+  OK with ``cg_flow``, ``sor_flow`` gives inconsistent results everytime it is
+  run. I recommend gray-scaling images before using ``sor_flow``. With that,
+  results are at least consistent between runs. I'm not sure about their
+  correctness. Ce Liu has been informed and should be working on it soon
+  enough (today is 14.Nov.2012).
