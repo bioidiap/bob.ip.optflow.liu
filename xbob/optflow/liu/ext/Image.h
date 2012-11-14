@@ -2736,7 +2736,7 @@ void Image<T>::ConvertFromMatlab(const T1 *pMatlabPlane, int _width, int _height
 	for(int i=0;i<imHeight;i++)
 		for(int j=0;j<imWidth;j++)
 			for(int k=0;k<nChannels;k++)
-				pData[offset++]=pMatlabPlane[k*nPixels+j*imHeight+i];
+				pData[offset++]=pMatlabPlane[(k*nPixels)+j+(i*imWidth)];
 }
 
 // convert image data to matlab matrix
@@ -2748,5 +2748,5 @@ void Image<T>::ConvertToMatlab(T1 *pMatlabPlane) const
 	for(int i=0;i<imHeight;i++)
 		for(int j=0;j<imWidth;j++)
 			for(int k=0;k<nChannels;k++)
-				pMatlabPlane[k*nPixels+j*imHeight+i]=pData[offset++];
+				pMatlabPlane[(k*nPixels)+j+(i*imWidth)]=pData[offset++];
 }

@@ -6,6 +6,7 @@
 """Bindings for flandmark
 """
 
+import os
 import sys
 import subprocess
 from setuptools import setup, find_packages
@@ -118,7 +119,6 @@ setup(
     entry_points = {
       'console_scripts': [
         'optflow_liu.py = xbob.optflow.liu.script.flow:main',
-        'optflow_old_liu.py = xbob.optflow.liu.script.old_flow:main',
         ],
       },
 

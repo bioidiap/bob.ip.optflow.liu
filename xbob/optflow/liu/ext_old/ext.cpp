@@ -31,7 +31,7 @@ static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
  */
 static void bz2dimage(blitz::Array<double,3>& bz, DImage& di) {
   di.clear();
-  di.ConvertFromMatlab<double>(bz.data(), bz.extent(2), bz.extent(1), 
+  di.ConvertFromMatlab<double>(bz.data(), bz.extent(2), bz.extent(1),
       bz.extent(0));
 }
 

@@ -11,7 +11,7 @@ import unittest
 import bob
 import numpy
 import pkg_resources
-from . import flow, grayscale_double
+from . import sor_flow, cg_flow
 
 def F(name, f):
   """Returns the test file on the "data" subdirectory"""
@@ -22,9 +22,9 @@ INPUT_VIDEO = F('bob.io.test', 'test.mov')
 class OpticalFlowLiuTest(unittest.TestCase):
   """Performs various tests on Ce Liu's Optical Flow package"""
 
-  def run_for(self, sample):
+  def run_for(self, sample, method, inputdir, refdir):
 
-    f = bob.io.HDF5File(os.path.join(EXAMPLES, '%s.hdf5' % sample))
+    f = bob.io.HDF5File(os.path.join(refdir, '%s.hdf5' % sample))
 
     # the reference flow field to use
     uv = f.read('uv')
@@ -35,63 +35,126 @@ class OpticalFlowLiuTest(unittest.TestCase):
     min_width = int(f.get_attribute('min_width', 'uv'))
     n_inner_fp_iterations = int(f.get_attribute('n_inner_fp_iterations', 'uv'))
     n_outer_fp_iterations = int(f.get_attribute('n_outer_fp_iterations', 'uv'))
-    n_sor_iterations = int(f.get_attribute('n_sor_iterations', 'uv'))
 
-    i1 = grayscale_double(bob.io.load(os.path.join(EXAMPLES, '%s1.png' % sample)))
-    i2 = grayscale_double(bob.io.load(os.path.join(EXAMPLES, '%s2.png' % sample)))
+    if f.has_attribute('n_sor_iterations', 'uv'):
+      n_iterations = int(f.get_attribute('n_sor_iterations', 'uv'))
+    elif f.has_attribute('n_cg_iterations', 'uv'):
+      n_iterations = int(f.get_attribute('n_cg_iterations', 'uv'))
+    else:
+      n_iterations = int(f.get_attribute('n_iterations', 'uv'))
 
-    (u, v, wi2) = flow(i1, i2, alpha, ratio, min_width,
-        n_outer_fp_iterations, n_inner_fp_iterations, n_sor_iterations)
+    i1 = bob.io.load(os.path.join(inputdir, '%s1.png' % sample)).astype('float64')/255.
+    i2 = bob.io.load(os.path.join(inputdir, '%s2.png' % sample)).astype('float64')/255.
 
-    self.assertTrue( numpy.array_equal(uv[0,:,:], u) )
-    self.assertTrue( numpy.array_equal(uv[1,:,:], v) )
+    (u, v, wi2) = method(i1, i2, alpha, ratio, min_width,
+        n_outer_fp_iterations, n_inner_fp_iterations, n_iterations)
 
-  def test01_car(self):
-    self.run_for('car')
+    self.assertTrue( numpy.allclose(uv[0,:,:], u) )
+    self.assertTrue( numpy.allclose(uv[1,:,:], v) )
 
-  def test02_table(self):
-    self.run_for('table')
+  def test01_car_gray_SOR(self):
+    self.run_for('car', sor_flow, 'example/GrayInput', 
+        'example/GrayInput/SORBasedOutput')
 
-  def test03_simple(self):
-    self.run_for('simple')
+  def test02_table_gray_SOR(self):
+    self.run_for('table', sor_flow, 'example/GrayInput',
+        'example/GrayInput/SORBasedOutput')
 
-  def test04_complex(self):
-    self.run_for('complex')
+  def test03_table_gray_CG(self):
+    self.run_for('table', cg_flow, 'example/GrayInput', 
+        'example/GrayInput/CGBasedOutput')
 
-  def external_run(self, sample):
+  def test04_simple_gray_SOR(self):
+    self.run_for('simple', sor_flow, 'example/GrayInput',
+        'example/GrayInput/SORBasedOutput')
+
+  def test05_complex_gray_SOR(self):
+    self.run_for('complex', sor_flow, 'example/GrayInput',
+        'example/GrayInput/SORBasedOutput')
+
+  # Note: color + SOR not working for the time being. Ce Liu notified -
+  # 13.11.2012
+
+  def test06_car_color_CG(self):
+    self.run_for('car', cg_flow, 'example/ColorInput',
+        'example/ColorInput/CGBasedOutput')
+
+  def external_run(self, sample, method, inputdir, refdir):
     from .script import flow
-    import tempfile
    
+    # prepare temporary file
+    import tempfile
+    (fd, out) = tempfile.mkstemp('.hdf5')
+    os.close(fd)
+    del fd
+    os.unlink(out)
+
     try:
-      args = ['--verbose']
-      args.append(os.path.join(EXAMPLES, '%s1.png') % sample)
-      args.append(os.path.join(EXAMPLES, '%s2.png') % sample)
-      (fd, out) = tempfile.mkstemp('.hdf5')
-      os.close(fd)
-      del fd
-      os.unlink(out)
+      args = ['--verbose', method]
+      f = bob.io.HDF5File(os.path.join(refdir, sample + '.hdf5'))
+      
+      # the values of parameters used for this flow field estimation
+      alpha = f.get_attribute('alpha', 'uv')
+      ratio = f.get_attribute('ratio', 'uv')
+      min_width = int(f.get_attribute('min_width', 'uv'))
+      n_outer_fp_iterations = int(f.get_attribute('n_outer_fp_iterations', 'uv'))
+      n_inner_fp_iterations = int(f.get_attribute('n_inner_fp_iterations', 'uv'))
+
+      if f.has_attribute('n_sor_iterations', 'uv'):
+        n_iterations = int(f.get_attribute('n_sor_iterations', 'uv'))
+      elif f.has_attribute('n_cg_iterations', 'uv'):
+        n_iterations = int(f.get_attribute('n_cg_iterations', 'uv'))
+      else:
+        n_iterations = int(f.get_attribute('n_iterations', 'uv'))
+
+      args += [
+          '--alpha=%.2f' % alpha,
+          '--ratio=%.2f' % ratio,
+          '--min-width=%d' % min_width,
+          '--outer-fp-iterations=%d' % n_outer_fp_iterations,
+          '--inner-fp-iterations=%d' % n_inner_fp_iterations,
+          '--iterations=%d' % n_iterations,
+          ]
+
+      args.append(os.path.join(inputdir, '%s1.png') % sample)
+      args.append(os.path.join(inputdir, '%s2.png') % sample)
       args.append(out)
       self.assertEqual(flow.main(args), 0)
 
       #load and check
-      uvref = bob.io.load(os.path.join(EXAMPLES, '%s.hdf5') % sample)
+      uvref = f.read('uv')
       uv = bob.io.load(out)
-      self.assertTrue( numpy.array_equal(uvref, uv) )
+      self.assertTrue( numpy.allclose(uvref, uv) )
 
     finally:
-      self.assertTrue(os.path.exists(out))
-      os.unlink(out)
+      if os.path.exists(out): os.unlink(out)
 
-  def test05_car_script(self):
-    self.external_run('car')
+  def test07_car_gray_sor_script(self):
+    self.external_run('complex', 'sor', 'example/GrayInput',
+        'example/GrayInput/SORBasedOutput')
 
-  def test06_video_script(self):
+
+  # Note: color + SOR not working for the time being. Ce Liu notified -
+  # 13.11.2012
+  def xtest08_table_color_sor_script(self):
+    self.external_run('table', 'sor', 'example/ColorInput',
+        'example/ColorInput/SORBasedOutput')
+
+  def test09_simple_gray_cg_script(self):
+    self.external_run('simple', 'cg', 'example/GrayInput',
+        'example/GrayInput/CGBasedOutput')
+
+  def test10_rubberwhale_color_cg_script(self):
+    self.external_run('rubberwhale', 'cg', 'example/ColorInput',
+        'example/ColorInput/CGBasedOutput')
+
+  def test11_video_script(self):
     from .script import flow
     import tempfile
     N = 3
    
     try:
-      args = ['--verbose', '--video-frames=%d' % N]
+      args = ['--verbose', '--video-frames=%d' % N, 'sor']
       args.append(INPUT_VIDEO)
       (fd, out) = tempfile.mkstemp('.hdf5')
       os.close(fd)

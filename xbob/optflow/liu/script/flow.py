@@ -29,49 +29,99 @@ Bob, as the core framework for this port:
   2012
 """
 
-__epilog__ = """Usage Example:
+__epilog__ = """examples:
 
-1. Estimate the OF in a video:
+1. Estimate the OF in a video using the Successive Over-Relaxation (SOR) 
+   variant:
 
-  $ %(prog)s myvideo.avi myflow.hdf5
+  $ %(prog)s sor myvideo.avi myflow.hdf5
 
-2. Estimate the OF in an image sequence:
+2. Estimate the OF in an image sequence using the Conjugate Gradient (CG)
+   variant:
 
-  $ %(prog)s image1.jpg image2.jpg flow.hdf5
+  $ %(prog)s cg image1.jpg image2.jpg flow.hdf5
+
+3. Get help for a specific variant (and see defaults for that variant):
+
+  $ %(prog)s sor -h
 """
 
 import os
 import sys
 import bob
+import argparse
 
-def main(user_input=None):
+class AliasedSubParsersAction(argparse._SubParsersAction):
+  """Hack taken from https://gist.github.com/471779 to allow aliases in 
+  argparse for python 2.x (this has been implemented on python 3.2)
+  """
 
-  import argparse
+  class _AliasedPseudoAction(argparse.Action):
+    def __init__(self, name, aliases, help):
+      dest = name
+      if aliases:
+        dest += ' (%s)' % ','.join(aliases)
+      sup = super(AliasedSubParsersAction._AliasedPseudoAction, self)
+      sup.__init__(option_strings=[], dest=dest, help=help) 
 
-  parser = argparse.ArgumentParser(description=__doc__, epilog=__epilog__,
-      formatter_class=argparse.RawDescriptionHelpFormatter)
+  def add_parser(self, name, **kwargs):
+    if 'aliases' in kwargs:
+      aliases = kwargs['aliases']
+      del kwargs['aliases']
+    else:
+      aliases = []
+
+    parser = super(AliasedSubParsersAction, self).add_parser(name, **kwargs)
+
+    # Make the aliases work.
+    for alias in aliases:
+      self._name_parser_map[alias] = parser
+    # Make the help text reflect them, first removing old help entry.
+    if 'help' in kwargs:
+      help = kwargs.pop('help')
+      self._choices_actions.pop()
+      pseudo_action = self._AliasedPseudoAction(name, aliases, help)
+      self._choices_actions.append(pseudo_action)
+
+    return parser
+
+def add_options(parser, alpha, ratio, min_width, outer, inner, iterations, 
+    method, variant):
+
+  parser.add_argument('-g', '--gray-scale', dest='gray', default=False, action='store_true', help="Gray-scales input data (if necessary) before feeding it to the flow estimation. This uses Bob's gray scale conversion instead of the Liu's built-in conversion and may lead to slightly different results.")
+
+  parser.add_argument('-a', '--alpha', dest='alpha', default=alpha, type=float, metavar='FLOAT', help="Regularization weight (defaults to %(default)s)")
+
+  parser.add_argument('-r', '--ratio', dest='ratio', default=ratio, type=float, metavar='FLOAT', help="Downsample ratio (defaults to %(default)s)")
+
+  parser.add_argument('-m', '--min-width', dest='min_width', 
+      default=min_width, type=int, metavar='N', help="Width of the coarsest level (defaults to %(default)s)")
+
+  parser.add_argument('-o', '--outer-fp-iterations', metavar='N', dest='outer', default=outer, type=int, help="The number of outer fixed-point iterations (defaults to %(default)s)")
+
+  parser.add_argument('-i', '--inner-fp-iterations', metavar='N', dest='inner', default=inner, type=int, help="The number of inner fixed-point iterations (defaults to %(default)s)")
+
+  parser.add_argument('-x', '--iterations', metavar='N', dest='iterations', default=iterations, type=int, help="The number of %s (error-minimization) iterations (defaults to %%(default)s)" % variant)
 
   parser.add_argument('input', metavar='INPUT', type=str, nargs='+',
       help="Input file(s) to load")
 
-  parser.add_argument('output', metavar='OUTPUT', type=str, 
+  parser.add_argument('output', metavar='OUTPUT', type=str,
       help="Where to place the output")
+
+  parser.set_defaults(flow=method)
+
+def main(user_input=None):
+
+  from .. import sor_flow, cg_flow
+
+  parser = argparse.ArgumentParser(description=__doc__, epilog=__epilog__,
+      formatter_class=argparse.RawDescriptionHelpFormatter)
+  # part of the hack to support aliases in subparsers
+  parser.register('action', 'parsers', AliasedSubParsersAction)
 
   parser.add_argument('-v', '--verbose', default=False, action='store_true',
       help="Increases the output verbosity level")
-
-  parser.add_argument('-a', '--alpha', dest='alpha', default=1.0, type=float, metavar='FLOAT', help="Regularization weight (defaults to %(default)s)")
-
-  parser.add_argument('-r', '--ratio', dest='ratio', default=0.5, type=float, metavar='FLOAT', help="Downsample ratio (defaults to %(default)s)")
-
-  parser.add_argument('-m', '--min-width', dest='min_width', default=40, 
-      type=int, metavar='N', help="Width of the coarsest level (defaults to %(default)s)")
-
-  parser.add_argument('-o', '--outer-fp-iterations', metavar='N', dest='outer', default=4, type=int, help="The number of outer fixed-point iterations (defaults to %(default)s)")
-
-  parser.add_argument('-i', '--inner-fp-iterations', metavar='N', dest='inner', default=1, type=int, help="The number of inner fixed-point iterations (defaults to %(default)s)")
-
-  parser.add_argument('-s', '--sor-iterations', metavar='N', dest='sor', default=20, type=int, help="The number of SOR iterations (defaults to %(default)s)")
 
   from ..version import __version__
   name = os.path.basename(os.path.splitext(sys.argv[0])[0])
@@ -80,6 +130,17 @@ def main(user_input=None):
 
   # secret option to limit the number of video frames to run for (test option)
   parser.add_argument('--video-frames', dest='frames', type=int, help=argparse.SUPPRESS)
+
+  # The variants
+  variants_parser = parser.add_subparsers(title='variants', help='Method variants implemented. Note different variants will have different defaults for input parameters following the content available on the original Matlab bindings and demonstrators.')
+
+  sor_based = variants_parser.add_parser('sor', aliases=['new'],
+      help='Executes the "newer" variant using Successive Over-Relaxation (SOR) instead of Conjugate Gradient (CG).')
+  add_options(sor_based, 1.0, 0.5, 40, 4, 1, 20, sor_flow, 'SOR')
+
+  cg_based = variants_parser.add_parser('cg', aliases=['old'], 
+      help='Executes the "older" variant using Conjugate Gradient (CG). This was the only available implementation until 11.08.2011 on Ce Liu\'s website.')
+  add_options(cg_based, 0.02, 0.75, 30, 20, 1, 50, cg_flow, 'CG')
 
   args = parser.parse_args(args=user_input)
 
@@ -97,8 +158,6 @@ def main(user_input=None):
       if exc.errno == errno.EEXIST: pass
       else: raise
 
-  from .. import flow, grayscale_double
-
   flows = []
   if len(args.input) == 1: #assume this is a video sequence
 
@@ -108,9 +167,10 @@ def main(user_input=None):
         sys.stdout.write('Loading only %d frames from %s...' % \
             (args.frames, args.input[0]))
         sys.stdout.flush()
+        sys.stdout.write('Ok')
+        sys.stdout.flush()
 
-      input = [grayscale_double(k) for k in
-          bob.io.VideoReader(args.input[0])[:args.frames]]
+      input = bob.io.VideoReader(args.input[0])[:args.frames]
 
     else:
 
@@ -118,37 +178,48 @@ def main(user_input=None):
         sys.stdout.write('Loading all frames from %s...' % args.input[0])
         sys.stdout.flush()
 
-      input = [grayscale_double(k) for k in bob.io.load(args.input[0])]
+      input = bob.io.load(args.input[0])
 
+  else: #assume the user passed a sequence of images
+
+    input = [bob.io.load(k) for k in args.input]
+
+  if args.verbose:
+    sys.stdout.write('Converting %d frames to double...' % len(input))
+    sys.stdout.flush()
+
+  input = [k.astype('float64')/255. for k in input]
+
+  if args.verbose:
+    sys.stdout.write('Ok\n')
+    sys.stdout.flush()
+
+  if args.gray:
+    
     if args.verbose:
-      sys.stdout.write('Ok\nProcessing %d frame-doubles' % len(input))
+      sys.stdout.write('Converting %d frames to grayscale...' % len(input))
+      sys.stdout.flush()
+    
+    input = [bob.ip.rgb_to_gray(k) for k in input]
+  
+    if args.verbose:
+      sys.stdout.write('Ok\n')
       sys.stdout.flush()
 
-    for index, (i1, i2) in enumerate(zip(input[:-1], input[1:])):
-      if args.verbose:
-        sys.stdout.write('.')
-        sys.stdout.flush()
-      flows.append(flow(i1, i2, args.alpha, args.ratio, args.min_width,
-        args.outer, args.inner, args.sor)[0:2])
+  if args.verbose:
+    sys.stdout.write('Processing %d frames' % len(input))
+    sys.stdout.flush()
 
+  for index, (i1, i2) in enumerate(zip(input[:-1], input[1:])):
     if args.verbose:
-      sys.stdout.write('\n')
+      sys.stdout.write('.')
       sys.stdout.flush()
+    flows.append(args.flow(i1, i2, args.alpha, args.ratio, args.min_width,
+      args.outer, args.inner, args.iterations)[0:2])
 
-  else: #assume the user has given us N images
-
-    # gray scale every one
-    input = [grayscale_double(bob.io.load(k)) for k in args.input]
-
-    for index, (i1, i2) in enumerate(zip(input[:-1], input[1:])):
-      if args.verbose:
-        sys.stdout.write('%s -> %s\n' % tuple(args.input[index:index+2]))
-        sys.stdout.flush()
-      flows.append(flow(i1, i2, args.alpha, args.ratio, args.min_width,
-        args.outer, args.inner, args.sor)[0:2])
-
-    if len(input) == 2: #special case, dump simple
-      flows = flows[0]
+  if args.verbose:
+    sys.stdout.write('\n')
+    sys.stdout.flush()
 
   if args.verbose:
     sys.stdout.write('Saving flows to %s\n' % args.output)
