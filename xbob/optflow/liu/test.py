@@ -22,9 +22,10 @@ INPUT_VIDEO = F('bob.io.test', 'test.mov')
 class OpticalFlowLiuTest(unittest.TestCase):
   """Performs various tests on Ce Liu's Optical Flow package"""
 
-  def run_for(self, sample, method, inputdir, refdir):
+  def run_for(self, sample, inputdir, refdir):
 
     f = bob.io.HDF5File(os.path.join(refdir, '%s.hdf5' % sample))
+    method = sor_flow if f.get_attribute('method', 'uv') == 'SOR' else cg_flow
 
     # the reference flow field to use
     uv = f.read('uv')
@@ -53,33 +54,27 @@ class OpticalFlowLiuTest(unittest.TestCase):
     self.assertTrue( numpy.allclose(uv[1,:,:], v) )
 
   def test01_car_gray_SOR(self):
-    self.run_for('car', sor_flow, 'example/GrayInput', 
-        'example/GrayInput/SORBasedOutput')
+    self.run_for('car', 'example/GrayInput', 'example/GrayInput/SORBasedOutput')
 
   def test02_table_gray_SOR(self):
-    self.run_for('table', sor_flow, 'example/GrayInput',
-        'example/GrayInput/SORBasedOutput')
+    self.run_for('table', 'example/GrayInput', 'example/GrayInput/SORBasedOutput')
 
   def test03_table_gray_CG(self):
-    self.run_for('table', cg_flow, 'example/GrayInput', 
-        'example/GrayInput/CGBasedOutput')
+    self.run_for('table', 'example/GrayInput', 'example/GrayInput/CGBasedOutput')
 
   def test04_simple_gray_SOR(self):
-    self.run_for('simple', sor_flow, 'example/GrayInput',
-        'example/GrayInput/SORBasedOutput')
+    self.run_for('simple', 'example/GrayInput', 'example/GrayInput/SORBasedOutput')
 
   def test05_complex_gray_SOR(self):
-    self.run_for('complex', sor_flow, 'example/GrayInput',
-        'example/GrayInput/SORBasedOutput')
+    self.run_for('complex', 'example/GrayInput', 'example/GrayInput/SORBasedOutput')
 
   # Note: color + SOR not working for the time being. Ce Liu notified -
   # 13.11.2012
 
   def test06_car_color_CG(self):
-    self.run_for('car', cg_flow, 'example/ColorInput',
-        'example/ColorInput/CGBasedOutput')
+    self.run_for('car', 'example/ColorInput', 'example/ColorInput/CGBasedOutput')
 
-  def external_run(self, sample, method, inputdir, refdir):
+  def external_run(self, sample, inputdir, refdir):
     from .script import flow
    
     # prepare temporary file
@@ -90,9 +85,8 @@ class OpticalFlowLiuTest(unittest.TestCase):
     os.unlink(out)
 
     try:
-      args = ['--verbose', method]
       f = bob.io.HDF5File(os.path.join(refdir, sample + '.hdf5'))
-      
+ 
       # the values of parameters used for this flow field estimation
       alpha = f.get_attribute('alpha', 'uv')
       ratio = f.get_attribute('ratio', 'uv')
@@ -107,9 +101,10 @@ class OpticalFlowLiuTest(unittest.TestCase):
       else:
         n_iterations = int(f.get_attribute('n_iterations', 'uv'))
 
+      args = ['--verbose', f.get_attribute('method', 'uv').lower()]
       args += [
-          '--alpha=%.2f' % alpha,
-          '--ratio=%.2f' % ratio,
+          '--alpha=%f' % alpha,
+          '--ratio=%f' % ratio,
           '--min-width=%d' % min_width,
           '--outer-fp-iterations=%d' % n_outer_fp_iterations,
           '--inner-fp-iterations=%d' % n_inner_fp_iterations,
@@ -130,23 +125,18 @@ class OpticalFlowLiuTest(unittest.TestCase):
       if os.path.exists(out): os.unlink(out)
 
   def test07_car_gray_sor_script(self):
-    self.external_run('complex', 'sor', 'example/GrayInput',
-        'example/GrayInput/SORBasedOutput')
-
+    self.external_run('complex', 'example/GrayInput', 'example/GrayInput/SORBasedOutput')
 
   # Note: color + SOR not working for the time being. Ce Liu notified -
   # 13.11.2012
   def xtest08_table_color_sor_script(self):
-    self.external_run('table', 'sor', 'example/ColorInput',
-        'example/ColorInput/SORBasedOutput')
+    self.external_run('table', 'example/ColorInput', 'example/ColorInput/SORBasedOutput')
 
   def test09_simple_gray_cg_script(self):
-    self.external_run('simple', 'cg', 'example/GrayInput',
-        'example/GrayInput/CGBasedOutput')
+    self.external_run('simple', 'example/GrayInput', 'example/GrayInput/CGBasedOutput')
 
   def test10_rubberwhale_color_cg_script(self):
-    self.external_run('rubberwhale', 'cg', 'example/ColorInput',
-        'example/ColorInput/CGBasedOutput')
+    self.external_run('rubberwhale', 'example/ColorInput', 'example/ColorInput/CGBasedOutput')
 
   def test11_video_script(self):
     from .script import flow
