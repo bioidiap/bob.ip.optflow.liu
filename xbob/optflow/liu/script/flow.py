@@ -198,7 +198,7 @@ def main(user_input=None):
     sys.stdout.write('Ok\n')
     sys.stdout.flush()
 
-  if args.gray:
+  if args.gray and len(input[0].shape) != 2:
     
     if args.verbose:
       sys.stdout.write('Converting %d frames to grayscale...' % len(input))
