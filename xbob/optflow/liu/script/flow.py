@@ -113,6 +113,7 @@ def add_options(parser, alpha, ratio, min_width, outer, inner, iterations,
       help="Where to place the output")
 
   parser.set_defaults(flow=method)
+  parser.set_defaults(variant=variant)
 
 def main(user_input=None):
 
@@ -227,7 +228,15 @@ def main(user_input=None):
   if args.verbose:
     sys.stdout.write('Saving flows to %s\n' % args.output)
     sys.stdout.flush()
-
-  bob.io.save(flows, args.output)
+  
+  out = bob.io.HDF5File(args.output, 'w')
+  out.set('uv', flows)
+  out.set_attribute('method', args.variant, 'uv')
+  out.set_attribute('alpha', args.alpha, 'uv')
+  out.set_attribute('ratio', args.ratio, 'uv')
+  out.set_attribute('min_width', args.min_width, 'uv')
+  out.set_attribute('n_outer_fp_iterations', args.outer, 'uv')
+  out.set_attribute('n_inner_fp_iterations', args.inner, 'uv')
+  out.set_attribute('n_iterations', args.iterations, 'uv')
 
   return 0
