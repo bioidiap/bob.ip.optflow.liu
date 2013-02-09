@@ -9,7 +9,7 @@
 #include <bob/core/python/gil.h>
 #include <bob/core/python/ndarray.h>
 
-#include <OpticalFlow.h>
+#include "OpticalFlow.h"
 
 using namespace boost::python;
 
