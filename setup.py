@@ -45,18 +45,18 @@ setup(
       },
 
     ext_modules=[
-      Extension("xbob.optflow.liu._liu",
+      Extension("xbob.optflow.liu._sor_based", #new implementation
         [
-          "xbob/optflow/liu/ext/ext.cpp",
-          "xbob/optflow/liu/ext/OpticalFlow.cpp",
-          "xbob/optflow/liu/ext/GaussianPyramid.cpp",
-          "xbob/optflow/liu/ext/Stochastic.cpp",
+          "xbob/optflow/liu/sor_based/ext.cpp",
+          "xbob/optflow/liu/sor_based/OpticalFlow.cpp",
+          "xbob/optflow/liu/sor_based/GaussianPyramid.cpp",
+          "xbob/optflow/liu/sor_based/Stochastic.cpp",
         ]),
-      Extension("xbob.optflow.liu._liu_old",
+      Extension("xbob.optflow.liu._cg_based", #old implementation
         [
-          "xbob/optflow/liu/ext_old/ext.cpp",
-          "xbob/optflow/liu/ext_old/OpticalFlow.cpp",
-          "xbob/optflow/liu/ext_old/GaussianPyramid.cpp",
+          "xbob/optflow/liu/cg_based/ext.cpp",
+          "xbob/optflow/liu/cg_based/OpticalFlow.cpp",
+          "xbob/optflow/liu/cg_based/GaussianPyramid.cpp",
         ]),
       ],
 
