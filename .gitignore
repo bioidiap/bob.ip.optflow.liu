@@ -14,5 +14,5 @@ dist
 .pydevproject
 build
 *.so
-example/
+reference/
 *.mex*
