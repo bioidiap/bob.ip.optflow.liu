@@ -4,8 +4,9 @@
 
 This package is a simple Boost.Python wrapper to the open-source Optical Flow
 estimator developed by C. Liu during his Ph.D. The code was originally
-conceived to operate over Matlab. This is a Python/Bob port. If you use this
-code, the author asks you to cite the following paper::
+conceived to operate over Matlab. This is a Python/`Bob
+<http://www.idiap.ch/software/bob/>`_ port. If you use this code, the author
+asks you to cite the following paper::
 
     @thesis{Liu_PHD_2009,
       title = {{Beyond Pixels: Exploring New Representations and Applications for Motion Analysis}},
@@ -16,7 +17,7 @@ code, the author asks you to cite the following paper::
     }
 
 If you decide to use this port on your publication, we kindly ask you to cite
-Bob as well, as the base software framework, on which this port has been
+`Bob`_ as well, as the base software framework, on which this port has been
 developed::
 
     @inproceedings{Anjos_ACMMM_2012,
@@ -36,26 +37,21 @@ Installation
 
 You can just add a dependence for ``xbob.optflow.liu`` on your ``setup.py`` to
 automatically download and have this package available at your satellite
-package. This works well if Bob is installed centrally at your machine. 
+package. This works well if Bob is installed centrally at your machine.
 
 Otherwise, you will need to tell ``buildout`` how to build the package locally
-and how to find Bob. For that, just add a custom egg recipe to your
-buildout that will fetch the package and compile it locally, setting the
-environment variable ``PKG_CONFIG_PATH`` to where Bob is installed. For
+and how to find Bob. For that, just add a recipe to your buildout that will
+fetch the package and compile it locally, setting the buildout variable
+``prefixes`` to where Bob is installed (a build directory will also work). For
 example::
 
   [buildout]
   parts = xbob.optflow.liu <other parts here...>
-  ...
-
-  [env]
-  PKG_CONFIG_PATH = /Users/andre/work/bob/build/install/lib/pkgconfig
-
+  prefixes = /Users/andre/work/bob/build/debug
   ...
 
   [xbob.optflow.liu]
-  recipe = zc.recipe.egg:custom
-  environment = env
+  recipe = xbob.buildout:develop
 
   ...
 
@@ -84,7 +80,7 @@ Usage
 Pretty simple, just do something like::
 
   import bob
-  from xbob.optflow.liu import cg_flow
+  from xbob.optflow.liu import cg_flow as flow
   ...
   (u, v, warped) = flow(image1, image2)
 
