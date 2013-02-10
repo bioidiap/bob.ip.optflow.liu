@@ -87,21 +87,95 @@ Pretty simple, just do something like::
 The ``cg_flow`` method accepts more parameters. Please refer to its built-in
 documentation for details.
 
+Reproducible Research Notes
+---------------------------
+
+Some notes on being able to reproduce consistent results through the different
+platforms supported by `Bob`_.
+
+Old CG-based Implementation (OSX vs. Linux)
+===========================================
+
+The outputs for the method on different architectures does not seem to match.
+Running under Linux, the output obtained with the Matlab bindings, officially
+supported by Ce, and the output produced by these pythonic bindings are very
+close (up to 0.00001 absolutely and 0.00000001 relatively). **Under OSX, the
+outputs are rather different**. I don't recommend using an OSX build of this
+python package for production at this point.
+
+To access this implementation, use `xbob.optflow.liu.cg_flow`.
+
+.. important::
+
+  Note, this **is not** the case for Liu's MEX implementation (CG-based). That
+  version gives the exact same output on both platforms.
+
+New SOR-based Implementation
+============================
+
+More recently (in August 2011), Ce Liu introduced a version of the Optical
+Flow framework using Successive Over-Relaxation (SOR) instead of Conjugate
+Gradient (CG) for minization. The new framework is presumably faster, but
+does not give similar results compared to the old CG-based one.
+
+If you would like to give it a spin, use the method ``sor_flow`` instead of
+``cg_flow`` as shown above. Notice that the defaults for both implementations
+are different, following the defaults pre-set in the Matlab MEX code in the
+different releases.
+
+Particularly, avoid feeding colored images to ``sor_flow``. While that works
+OK with ``cg_flow``, ``sor_flow`` gives inconsistent results everytime it is
+run. I recommend gray-scaling images before using ``sor_flow``. With that,
+results are at least consistent between runs. I'm not sure about their
+correctness. Ce Liu has been informed and should be working on it soon
+enough (today is 14.Nov.2012).
+
+To access this implementation, use `xbob.optflow.liu.sor_flow`.
+
+Access to the MATLAB code
+=========================
+
+Once you have installed the package through ``zc.buildout`` (by calling
+``./bin/buildout``), you will have access to a directory called ``example``,
+which contains the code as it is/was distributed by Ce Liu, and a few Matlab
+routines that can be used to produce samples for testing. To use the Matlab
+code, you must::
+
+  $ # OldCodeFromLiu => CG-based implementation
+  $ # CodeFromLiu    => SOR-based implementation
+  $ cd example/OldCodeFromLiu/mex
+  $ mex Coarse2FineTwoFrames.cpp OpticalFlow.cpp GaussianPyramid.cpp
+  $ cd ..
+
+At this point, the MEX is compiled and ready to be used. You will find 2
+routines on the directory: ``flowimage`` and ``flowmovie``. They can be used to
+process single images or movie files. They both produce `HDF5
+<http://www.hdfgroup.org/HDF5/>`_ files that can be used as test input for this
+package's test suite, or for inspection (use ``h5dump`` to look into the file
+contents).
+
+Here is an example of usage for the Matlab function ``flowimage``::
+
+  $ matlab
+  ...
+  >> flowimage ../GrayInput table .
+
+This will generate a file called ``table.hdf5`` that contains the flow
+calculated for the ``table`` example, i.e. between images ``table1.png`` and
+``table2.png``. The input images are pre-gray-scaled and are taken from
+the directory ``../GrayInput``, following your command.
+
+You will find more examples on this directory and on the ``../ColorInput``
+directory.
+
 .. note::
 
-  More recently (in August 2011), Ce Liu introduced a version of the Optical
-  Flow framework using Successive Over-Relaxation (SOR) instead of Conjugate
-  Gradient (CG) for minization. The new framework is presumably faster, but
-  does not give similar results compared to the old CG-based one.
+  The contents of the directory ``example`` are downloaded automatically by
+  buildout. You can find the URL of the package by looking inside the file
+  ``buildout.cfg``.
 
-  If you would like to give it a spin, use the method ``sor_flow`` instead of
-  ``cg_flow`` as shown above. Notice that the defaults for both implementations
-  are different, following the defaults pre-set in the Matlab MEX code in the
-  different releases.
+.. note::
 
-  Particularly, avoid feeding colored images to ``sor_flow``. While that works
-  OK with ``cg_flow``, ``sor_flow`` gives inconsistent results everytime it is
-  run. I recommend gray-scaling images before using ``sor_flow``. With that,
-  results are at least consistent between runs. I'm not sure about their
-  correctness. Ce Liu has been informed and should be working on it soon
-  enough (today is 14.Nov.2012).
+  The example images are coded in PNG format so that they don't suffer from
+  compression/decompression problems and can be read the same way in any
+  platform or implementation.
