@@ -44,8 +44,8 @@ class OpticalFlowLiuTest(unittest.TestCase):
     else:
       n_iterations = int(f.get_attribute('n_iterations', 'uv'))
 
-    i1 = bob.io.load(F(__name__, '%s1.png' % sample).astype('float64')/255.
-    i2 = bob.io.load(F(__name__, '%s2.png' % sample).astype('float64')/255.
+    i1 = bob.io.load(F(__name__, '%s1.png' % sample)).astype('float64')/255.
+    i2 = bob.io.load(F(__name__, '%s2.png' % sample)).astype('float64')/255.
 
     (u, v, wi2) = method(i1, i2, alpha, ratio, min_width,
         n_outer_fp_iterations, n_inner_fp_iterations, n_iterations)
@@ -54,25 +54,25 @@ class OpticalFlowLiuTest(unittest.TestCase):
     self.assertTrue( numpy.allclose(uv[1,:,:], v) )
 
   def test01_car_gray_SOR(self):
-    self.run_for('car', 'reference/gray/sor_based')
+    self.run_for('gray/car', 'reference/sor_based')
 
   def test02_table_gray_SOR(self):
-    self.run_for('table', 'reference/gray/sor_based')
+    self.run_for('gray/table', 'reference/sor_based')
 
   def test03_table_gray_CG(self):
-    self.run_for('table', 'reference/gray/cg_based')
+    self.run_for('gray/table', 'reference/cg_based')
 
   def test04_simple_gray_SOR(self):
-    self.run_for('simple', 'reference/gray/sor_based')
+    self.run_for('gray/simple', 'reference/sor_based')
 
   def test05_complex_gray_SOR(self):
-    self.run_for('complex', 'reference/gray/sor_based')
+    self.run_for('gray/complex', 'reference/sor_based')
 
   # Note: color + SOR not working for the time being. Ce Liu notified -
   # 13.11.2012
 
   def test06_car_color_CG(self):
-    self.run_for('car', 'reference/color/cg_based')
+    self.run_for('color/car', 'reference/cg_based')
 
   def external_run(self, sample, refdir):
     from .script import flow
@@ -125,18 +125,18 @@ class OpticalFlowLiuTest(unittest.TestCase):
       if os.path.exists(out): os.unlink(out)
 
   def test07_car_gray_sor_script(self):
-    self.external_run('complex', 'reference/gray/sor_based')
+    self.external_run('gray/complex', 'reference/gray/sor_based')
 
   # Note: color + SOR not working for the time being. Ce Liu notified -
   # 13.11.2012
   def xtest08_table_color_sor_script(self):
-    self.external_run('table', 'reference/color/sor_based')
+    self.external_run('gray/table', 'reference/color/sor_based')
 
   def test09_simple_gray_cg_script(self):
-    self.external_run('simple', 'reference/gray/cg_based')
+    self.external_run('gray/simple', 'reference/gray/cg_based')
 
   def test10_rubberwhale_color_cg_script(self):
-    self.external_run('rubberwhale', 'reference/color/cg_based')
+    self.external_run('gray/rubberwhale', 'reference/color/cg_based')
 
   def test11_video_script(self):
     from .script import flow

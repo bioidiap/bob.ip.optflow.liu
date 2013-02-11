@@ -19,6 +19,7 @@ using namespace boost::python;
  */
 static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
   di.clear();
+  //di.ConvertFromMatlab<double>(bz.data(), bz.extent(1), bz.extent(0), 1);
   di.imWidth = bz.extent(1);
   di.imHeight = bz.extent(0);
   di.nChannels = 1;
