@@ -132,8 +132,8 @@ static tuple coarse2fine_flow (
 
 BOOST_PYTHON_FUNCTION_OVERLOADS(coarse2fine_flow_overloads, coarse2fine_flow, 2, 8)
 
-BOOST_PYTHON_MODULE(_liu) {
-  bob::python::setup_python("bindings to Ce Liu's Optical Flow dense estimator");
+BOOST_PYTHON_MODULE(_sor_based) {
+  bob::python::setup_python("Bindings to Ce Liu's Optical Flow dense estimator (using Successive-Over-Relaxation)");
 
   boost::python::def("flow", coarse2fine_flow, coarse2fine_flow_overloads((
           boost::python::arg("i1"), 
