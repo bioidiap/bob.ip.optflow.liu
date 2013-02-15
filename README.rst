@@ -93,23 +93,6 @@ Reproducible Research Notes
 Some notes on being able to reproduce consistent results through the different
 platforms supported by `Bob`_.
 
-Old CG-based Implementation (OSX vs. Linux)
-===========================================
-
-The outputs for the method on different architectures does not seem to match.
-Running under Linux, the output obtained with the Matlab bindings, officially
-supported by Ce, and the output produced by these pythonic bindings are very
-close (up to 0.00001 absolutely and 0.00000001 relatively). **Under OSX, the
-outputs are rather different**. I don't recommend using an OSX build of this
-python package for production at this point.
-
-To access this implementation, use `xbob.optflow.liu.cg_flow`.
-
-.. important::
-
-  Note, this **is not** the case for Liu's MEX implementation (CG-based). That
-  version gives the exact same output on both platforms.
-
 New SOR-based Implementation
 ============================
 
@@ -135,15 +118,14 @@ To access this implementation, use `xbob.optflow.liu.sor_flow`.
 Access to the MATLAB code
 =========================
 
-Once you have installed the package through ``zc.buildout`` (by calling
-``./bin/buildout``), you will have access to a directory called ``example``,
-which contains the code as it is/was distributed by Ce Liu, and a few Matlab
-routines that can be used to produce samples for testing. To use the Matlab
-code, you must::
+Once you have installed the package, you will have access to a directory called
+``matlab``, which contains the code as it is/was distributed by Ce Liu, and a
+few Matlab routines that can be used to produce samples for testing. To use the
+Matlab code, you must::
 
-  $ # OldCodeFromLiu => CG-based implementation
-  $ # CodeFromLiu    => SOR-based implementation
-  $ cd example/OldCodeFromLiu/mex
+  $ # matlab/cg_based  => CG-based implementation
+  $ # matlab/sor_based => SOR-based implementation
+  $ cd matlab/cg_based/mex
   $ mex Coarse2FineTwoFrames.cpp OpticalFlow.cpp GaussianPyramid.cpp
   $ cd ..
 
@@ -158,19 +140,19 @@ Here is an example of usage for the Matlab function ``flowimage``::
 
   $ matlab
   ...
-  >> flowimage ../GrayInput table .
+  >> flowimage ../../xbob/optflow/liu/data/gray table .
 
 This will generate a file called ``table.hdf5`` that contains the flow
 calculated for the ``table`` example, i.e. between images ``table1.png`` and
 ``table2.png``. The input images are pre-gray-scaled and are taken from
-the directory ``../GrayInput``, following your command.
+the directory ``../../xbob/optflow/liu/data/gray``, following your command.
 
-You will find more examples on this directory and on the ``../ColorInput``
-directory.
+You will find more examples on this directory and on the 
+``../../xbob/optflow/liu/data/gray`` directory.
 
 .. note::
 
-  The contents of the directory ``example`` are downloaded automatically by
+  The contents of the directory ``reference`` are downloaded automatically by
   buildout. You can find the URL of the package by looking inside the file
   ``buildout.cfg``.
 
