@@ -6,7 +6,8 @@
 """Bindings for Liu's optical flow
 """
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, dist
+dist.Distribution(dict(setup_requires='xbob.extension'))
 from xbob.extension import Extension
 
 setup(
@@ -51,13 +52,15 @@ setup(
           "xbob/optflow/liu/sor_based/OpticalFlow.cpp",
           "xbob/optflow/liu/sor_based/GaussianPyramid.cpp",
           "xbob/optflow/liu/sor_based/Stochastic.cpp",
-        ]),
+        ],
+        ),
       Extension("xbob.optflow.liu._cg_based", #old implementation
         [
           "xbob/optflow/liu/cg_based/ext.cpp",
           "xbob/optflow/liu/cg_based/OpticalFlow.cpp",
           "xbob/optflow/liu/cg_based/GaussianPyramid.cpp",
-        ]),
+        ],
+        )
       ],
 
     classifiers = [

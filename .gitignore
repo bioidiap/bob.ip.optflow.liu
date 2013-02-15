@@ -16,3 +16,4 @@ build
 *.so
 reference/
 *.mex*
+xbob.extension*.egg
