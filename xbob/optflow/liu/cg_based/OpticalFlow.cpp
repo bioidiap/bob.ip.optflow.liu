@@ -7,26 +7,26 @@
 using namespace std;
 
 #ifndef _MATLAB
-	bool OpticalFlow::IsDisplay=true;
+	bool cg::OpticalFlow::IsDisplay=true;
 #else
-	bool OpticalFlow::IsDisplay=false;
+	bool cg::OpticalFlow::IsDisplay=false;
 #endif
 
-OpticalFlow::OpticalFlow(void)
+cg::OpticalFlow::OpticalFlow(void)
 {
 }
 
-OpticalFlow::~OpticalFlow(void)
+cg::OpticalFlow::~OpticalFlow(void)
 {
 }
 
 //--------------------------------------------------------------------------------------------------------
 //  function to compute dx, dy and dt for motion estimation
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::getDxs(DImage &imdx, DImage &imdy, DImage &imdt, const DImage &im1, const DImage &im2)
+void cg::OpticalFlow::getDxs(cg::DImage &imdx, cg::DImage &imdy, cg::DImage &imdt, const cg::DImage &im1, const cg::DImage &im2)
 {
 	// Im1 and Im2 are the smoothed version of im1 and im2
-	DImage Im1,Im2;
+	cg::DImage Im1,Im2;
 	double gfilter[5]={0.05,0.2,0.5,0.2,0.05};
 	im1.imfilter_hv(Im1,gfilter,2,gfilter,2);
 	im2.imfilter_hv(Im2,gfilter,2,gfilter,2);
@@ -45,7 +45,7 @@ void OpticalFlow::getDxs(DImage &imdx, DImage &imdy, DImage &imdt, const DImage 
 //--------------------------------------------------------------------------------------------------------
 // function to do sanity check: imdx*du+imdy*dy+imdt=0
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::SanityCheck(const DImage &imdx, const DImage &imdy, const DImage &imdt, double du, double dv)
+void cg::OpticalFlow::SanityCheck(const cg::DImage &imdx, const cg::DImage &imdy, const cg::DImage &imdt, double du, double dv)
 {
 	if(imdx.matchDimension(imdy)==false || imdx.matchDimension(imdt)==false)
 	{
@@ -72,7 +72,7 @@ void OpticalFlow::SanityCheck(const DImage &imdx, const DImage &imdy, const DIma
 //--------------------------------------------------------------------------------------------------------
 // function to warp image based on the flow field
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::warpFL(DImage &warpIm2, const DImage &Im1, const DImage &Im2, const DImage &vx, const DImage &vy)
+void cg::OpticalFlow::warpFL(cg::DImage &warpIm2, const cg::DImage &Im1, const cg::DImage &Im2, const cg::DImage &vx, const cg::DImage &vy)
 {
 	if(warpIm2.matchDimension(Im2)==false)
 		warpIm2.allocate(Im2.width(),Im2.height(),Im2.nchannels());
@@ -82,7 +82,7 @@ void OpticalFlow::warpFL(DImage &warpIm2, const DImage &Im1, const DImage &Im2, 
 //--------------------------------------------------------------------------------------------------------
 // function to generate mask of the pixels that move inside the image boundary
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::genInImageMask(DImage &mask, const DImage &vx, const DImage &vy)
+void cg::OpticalFlow::genInImageMask(cg::DImage &mask, const cg::DImage &vx, const cg::DImage &vy)
 {
 	int imWidth,imHeight;
 	imWidth=vx.width();
@@ -116,30 +116,30 @@ void OpticalFlow::genInImageMask(DImage &mask, const DImage &vx, const DImage &v
 //	u,v:									the current flow field, NOTICE that they are also output arguments
 //	
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::SmoothFlowPDE(const DImage &Im1, const DImage &Im2, DImage &warpIm2, DImage &u, DImage &v, 
+void cg::OpticalFlow::SmoothFlowPDE(const cg::DImage &Im1, const cg::DImage &Im2, cg::DImage &warpIm2, cg::DImage &u, cg::DImage &v, 
 																    double alpha, int nOuterFPIterations, int nInnerFPIterations, int nCGIterations)
 {
-	DImage mask,imdx,imdy,imdt;
+	cg::DImage mask,imdx,imdy,imdt;
 	int imWidth,imHeight,nChannels,nPixels;
 	imWidth=Im1.width();
 	imHeight=Im1.height();
 	nChannels=Im1.nchannels();
 	nPixels=imWidth*imHeight;
 
-	DImage du(imWidth,imHeight),dv(imWidth,imHeight);
-	DImage uu(imWidth,imHeight),vv(imWidth,imHeight);
-	DImage ux(imWidth,imHeight),uy(imWidth,imHeight);
-	DImage vx(imWidth,imHeight),vy(imWidth,imHeight);
-	DImage Phi_1st(imWidth,imHeight);
-	DImage Psi_1st(imWidth,imHeight,nChannels);
+	cg::DImage du(imWidth,imHeight),dv(imWidth,imHeight);
+	cg::DImage uu(imWidth,imHeight),vv(imWidth,imHeight);
+	cg::DImage ux(imWidth,imHeight),uy(imWidth,imHeight);
+	cg::DImage vx(imWidth,imHeight),vy(imWidth,imHeight);
+	cg::DImage Phi_1st(imWidth,imHeight);
+	cg::DImage Psi_1st(imWidth,imHeight,nChannels);
 
-	DImage imdxy,imdx2,imdy2,imdtdx,imdtdy;
-	DImage ImDxy,ImDx2,ImDy2,ImDtDx,ImDtDy;
-	DImage A11,A12,A22,b1,b2;
-	DImage foo1,foo2;
+	cg::DImage imdxy,imdx2,imdy2,imdtdx,imdtdy;
+	cg::DImage ImDxy,ImDx2,ImDy2,ImDtDx,ImDtDy;
+	cg::DImage A11,A12,A22,b1,b2;
+	cg::DImage foo1,foo2;
 
 	// variables for conjugate gradient
-	DImage r1,r2,p1,p2,q1,q2;
+	cg::DImage r1,r2,p1,p2,q1,q2;
 	double* rou;
 	rou=new double[nCGIterations];
 
@@ -351,10 +351,10 @@ void OpticalFlow::SmoothFlowPDE(const DImage &Im1, const DImage &Im2, DImage &wa
 	}// end of outer fixed point iteration
 	
 	
-	delete rou;
+	delete[] rou;
 }
 
-void OpticalFlow::Laplacian(DImage &output, const DImage &input, const DImage& weight)
+void cg::OpticalFlow::Laplacian(cg::DImage &output, const cg::DImage &input, const cg::DImage& weight)
 {
 	if(output.matchDimension(input)==false)
 		output.allocate(input);
@@ -362,13 +362,13 @@ void OpticalFlow::Laplacian(DImage &output, const DImage &input, const DImage& w
 
 	if(input.matchDimension(weight)==false)
 	{
-		cout<<"Error in image dimension matching OpticalFlow::Laplacian()!"<<endl;
+		cout<<"Error in image dimension matching cg::OpticalFlow::Laplacian()!"<<endl;
 		return;
 	}
 	
 	const double *inputData=input.data(),*weightData=weight.data();
 	int width=input.width(),height=input.height();
-	DImage foo(width,height);
+	cg::DImage foo(width,height);
 	double *fooData=foo.data(),*outputData=output.data();
 
 	// horizontal filtering
@@ -406,17 +406,17 @@ void OpticalFlow::Laplacian(DImage &output, const DImage &input, const DImage& w
 		}
 }
 
-void OpticalFlow::testLaplacian(int dim)
+void cg::OpticalFlow::testLaplacian(int dim)
 {
 	// generate the random weight
-	DImage weight(dim,dim);
+	cg::DImage weight(dim,dim);
 	for(int i=0;i<dim;i++)
 		for(int j=0;j<dim;j++)
 			//weight.data()[i*dim+j]=(double)rand()/RAND_MAX+1;
 			weight.data()[i*dim+j]=1;
 	// go through the linear system;
-	DImage sysMatrix(dim*dim,dim*dim);
-	DImage u(dim,dim),du(dim,dim);
+	cg::DImage sysMatrix(dim*dim,dim*dim);
+	cg::DImage u(dim,dim),du(dim,dim);
 	for(int i=0;i<dim*dim;i++)
 	{
 		u.reset();
@@ -441,7 +441,7 @@ void OpticalFlow::testLaplacian(int dim)
 //--------------------------------------------------------------------------------------
 // function to perfomr coarse to fine optical flow estimation
 //--------------------------------------------------------------------------------------
-void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const DImage &Im1, const DImage &Im2, double alpha, double ratio, int minWidth, 
+void cg::OpticalFlow::Coarse2FineFlow(cg::DImage &vx, cg::DImage &vy, cg::DImage &warpI2,const cg::DImage &Im1, const cg::DImage &Im2, double alpha, double ratio, int minWidth, 
 																	 int nOuterFPIterations, int nInnerFPIterations, int nCGIterations)
 {
 	// first build the pyramid of the two images
@@ -455,7 +455,7 @@ void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const D
 	//	cout<<"done!"<<endl;
 	
 	// now iterate from the top level to the bottom
-	DImage Image1,Image2,WarpImage2;
+	cg::DImage Image1,Image2,WarpImage2;
 
 	for(int k=GPyramid1.nlevels()-1;k>=0;k--)
 	{
@@ -494,7 +494,7 @@ void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const D
 //---------------------------------------------------------------------------------------
 // function to convert image to feature image
 //---------------------------------------------------------------------------------------
-void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
+void cg::OpticalFlow::im2feature(cg::DImage &imfeature, const cg::DImage &im)
 {
 	int width=im.width();
 	int height=im.height();
@@ -502,7 +502,7 @@ void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
 	if(nchannels==1)
 	{
 		imfeature.allocate(im.width(),im.height(),3);
-		DImage imdx,imdy;
+		cg::DImage imdx,imdy;
 		im.dx(imdx,true);
 		im.dy(imdy,true);
 		double* data=imfeature.data();
@@ -517,11 +517,11 @@ void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
 	}
 	else if(nchannels==3)
 	{
-		DImage grayImage;
+		cg::DImage grayImage;
 		im.desaturate(grayImage);
 
 		imfeature.allocate(im.width(),im.height(),5);
-		DImage imdx,imdy;
+		cg::DImage imdx,imdy;
 		grayImage.dx(imdx,true);
 		grayImage.dy(imdy,true);
 		double* data=imfeature.data();

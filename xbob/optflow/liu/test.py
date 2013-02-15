@@ -125,18 +125,18 @@ class OpticalFlowLiuTest(unittest.TestCase):
       if os.path.exists(out): os.unlink(out)
 
   def test07_car_gray_sor_script(self):
-    self.external_run('gray/complex', 'reference/gray/sor_based')
+    self.external_run('gray/complex', 'reference/sor_based')
 
   # Note: color + SOR not working for the time being. Ce Liu notified -
   # 13.11.2012
   def xtest08_table_color_sor_script(self):
-    self.external_run('gray/table', 'reference/color/sor_based')
+    self.external_run('gray/table', 'reference/sor_based')
 
   def test09_simple_gray_cg_script(self):
-    self.external_run('gray/simple', 'reference/gray/cg_based')
+    self.external_run('gray/simple', 'reference/cg_based')
 
   def test10_rubberwhale_color_cg_script(self):
-    self.external_run('gray/rubberwhale', 'reference/color/cg_based')
+    self.external_run('color/rubberwhale', 'reference/cg_based')
 
   def test11_video_script(self):
     from .script import flow

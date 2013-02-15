@@ -17,7 +17,7 @@ using namespace boost::python;
  * Temporarily assigns the memory storage from the blitz array to the double
  * image type that is used by Liu's framework.
  */
-static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
+static void bz2dimage(blitz::Array<double,2>& bz, cg::DImage& di) {
   di.clear();
   //di.ConvertFromMatlab<double>(bz.data(), bz.extent(1), bz.extent(0), 1);
   di.imWidth = bz.extent(1);
@@ -30,7 +30,7 @@ static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
 /**
  * Copies and transposes 3D array data
  */
-static void bz2dimage(blitz::Array<double,3>& bz, DImage& di) {
+static void bz2dimage(blitz::Array<double,3>& bz, cg::DImage& di) {
   di.clear();
   di.ConvertFromMatlab<double>(bz.data(), bz.extent(2), bz.extent(1),
       bz.extent(0));
@@ -48,8 +48,8 @@ static tuple coarse2fine_flow (
     ) {
 
   bob::core::array::typeinfo info = i1.type();
-  DImage di1;
-  DImage di2;
+  cg::DImage di1;
+  cg::DImage di2;
 
   if (info.nd == 2) {
 
@@ -86,12 +86,12 @@ static tuple coarse2fine_flow (
   }
 
   //Output arrays
-  DImage du;
-  DImage dv;
-  DImage dwarped_i2;
+  cg::DImage du;
+  cg::DImage dv;
+  cg::DImage dwarped_i2;
 
   //Calls Optical Flow estimation
-  OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
+  cg::OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
       alpha, ratio, minWidth, nOuterFPIterations, nInnerFPIterations,
       nCGIterations);
 
@@ -129,20 +129,22 @@ static tuple coarse2fine_flow (
   return retval;
 }
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(coarse2fine_flow_overloads, coarse2fine_flow, 2, 8)
+namespace cg {
+  BOOST_PYTHON_FUNCTION_OVERLOADS(coarse2fine_flow_overloads, coarse2fine_flow, 2, 8)
+}
 
 BOOST_PYTHON_MODULE(_cg_based) {
   bob::python::setup_python("Bindings to Ce Liu's Optical Flow dense estimator (using Conjugate-Gradient)");
 
-  boost::python::def("flow", coarse2fine_flow, coarse2fine_flow_overloads((
-          boost::python::arg("i1"), 
-          boost::python::arg("i2"), 
-          boost::python::arg("alpha")=0.02, 
-          boost::python::arg("ratio")=0.75, 
-          boost::python::arg("min_width")=30, 
+  boost::python::def("flow", coarse2fine_flow, cg::coarse2fine_flow_overloads((
+          boost::python::arg("i1"),
+          boost::python::arg("i2"),
+          boost::python::arg("alpha")=0.02,
+          boost::python::arg("ratio")=0.75,
+          boost::python::arg("min_width")=30,
           boost::python::arg("n_outer_fp_iterations")=20,
           boost::python::arg("n_inner_fp_iterations")=1,
-          boost::python::arg("n_cg_iterations")=50), 
+          boost::python::arg("n_cg_iterations")=50),
         "Computes dense optical flow field in a coarse to fine manner using conjugate gradient (CG)\n"
         "\n"
         "This method computes the dense optical flow field using a coarse-to-fine approach. C++ code running under this call is extracted from **the old version (pre Aug 1, 2011)** of `Ce Liu's homepage <http://people.csail.mit.edu/celiu/OpticalFlow/>`_ and should give the exact same output as the Matlab equivalent.\n\n"

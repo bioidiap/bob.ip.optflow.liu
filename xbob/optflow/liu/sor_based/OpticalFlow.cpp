@@ -8,44 +8,44 @@
 using namespace std;
 
 #ifndef _MATLAB
-	bool OpticalFlow::IsDisplay=true;
+	bool sor::OpticalFlow::IsDisplay=true;
 #else
-	bool OpticalFlow::IsDisplay=false;
+	bool sor::OpticalFlow::IsDisplay=false;
 #endif
 
-//OpticalFlow::InterpolationMethod OpticalFlow::interpolation = OpticalFlow::Bicubic;
-OpticalFlow::InterpolationMethod OpticalFlow::interpolation = OpticalFlow::Bilinear;
-OpticalFlow::NoiseModel OpticalFlow::noiseModel = OpticalFlow::Lap;
-GaussianMixture OpticalFlow::GMPara;
-Vector<double> OpticalFlow::LapPara;
+//sor::OpticalFlow::InterpolationMethod sor::OpticalFlow::interpolation = sor::OpticalFlow::Bicubic;
+sor::OpticalFlow::InterpolationMethod sor::OpticalFlow::interpolation = sor::OpticalFlow::Bilinear;
+sor::OpticalFlow::NoiseModel sor::OpticalFlow::noiseModel = sor::OpticalFlow::Lap;
+sor::GaussianMixture sor::OpticalFlow::GMPara;
+sor::Vector<double> sor::OpticalFlow::LapPara;
 
 
-OpticalFlow::OpticalFlow(void)
+sor::OpticalFlow::OpticalFlow(void)
 {
 }
 
-OpticalFlow::~OpticalFlow(void)
+sor::OpticalFlow::~OpticalFlow(void)
 {
 }
 
 //--------------------------------------------------------------------------------------------------------
 //  function to compute dx, dy and dt for motion estimation
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::getDxs(DImage &imdx, DImage &imdy, DImage &imdt, const DImage &im1, const DImage &im2)
+void sor::OpticalFlow::getDxs(sor::DImage &imdx, sor::DImage &imdy, sor::DImage &imdt, const sor::DImage &im1, const sor::DImage &im2)
 {
 	//double gfilter[5]={0.01,0.09,0.8,0.09,0.01};
 	double gfilter[5]={0.02,0.11,0.74,0.11,0.02};
 	//double gfilter[5]={0,0,1,0,0};
 	if(1)
 	{
-		//DImage foo,Im;
+		//sor::DImage foo,Im;
 		//Im.Add(im1,im2);
 		//Im.Multiplywith(0.5);
 		////foo.imfilter_hv(Im,gfilter,2,gfilter,2);
 		//Im.dx(imdx,true);
 		//Im.dy(imdy,true);
 		//imdt.Subtract(im2,im1);
-		DImage Im1,Im2,Im;
+		sor::DImage Im1,Im2,Im;
 		
 		im1.imfilter_hv(Im1,gfilter,2,gfilter,2);
 		im2.imfilter_hv(Im2,gfilter,2,gfilter,2);
@@ -63,7 +63,7 @@ void OpticalFlow::getDxs(DImage &imdx, DImage &imdy, DImage &imdt, const DImage 
 	else
 	{
 		// Im1 and Im2 are the smoothed version of im1 and im2
-		DImage Im1,Im2;
+		sor::DImage Im1,Im2;
 		
 		im1.imfilter_hv(Im1,gfilter,2,gfilter,2);
 		im2.imfilter_hv(Im2,gfilter,2,gfilter,2);
@@ -85,7 +85,7 @@ void OpticalFlow::getDxs(DImage &imdx, DImage &imdy, DImage &imdt, const DImage 
 //--------------------------------------------------------------------------------------------------------
 // function to do sanity check: imdx*du+imdy*dy+imdt=0
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::SanityCheck(const DImage &imdx, const DImage &imdy, const DImage &imdt, double du, double dv)
+void sor::OpticalFlow::SanityCheck(const sor::DImage &imdx, const sor::DImage &imdy, const sor::DImage &imdt, double du, double dv)
 {
 	if(imdx.matchDimension(imdy)==false || imdx.matchDimension(imdt)==false)
 	{
@@ -112,25 +112,25 @@ void OpticalFlow::SanityCheck(const DImage &imdx, const DImage &imdy, const DIma
 //--------------------------------------------------------------------------------------------------------
 // function to warp image based on the flow field
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::warpFL(DImage &warpIm2, const DImage &Im1, const DImage &Im2, const DImage &vx, const DImage &vy)
+void sor::OpticalFlow::warpFL(sor::DImage &warpIm2, const sor::DImage &Im1, const sor::DImage &Im2, const sor::DImage &vx, const sor::DImage &vy)
 {
 	if(warpIm2.matchDimension(Im2)==false)
 		warpIm2.allocate(Im2.width(),Im2.height(),Im2.nchannels());
-	ImageProcessing::warpImage(warpIm2.data(),Im1.data(),Im2.data(),vx.data(),vy.data(),Im2.width(),Im2.height(),Im2.nchannels());
+	sor::ImageProcessing::warpImage(warpIm2.data(),Im1.data(),Im2.data(),vx.data(),vy.data(),Im2.width(),Im2.height(),Im2.nchannels());
 }
 
-void OpticalFlow::warpFL(DImage &warpIm2, const DImage &Im1, const DImage &Im2, const DImage &Flow)
+void sor::OpticalFlow::warpFL(sor::DImage &warpIm2, const sor::DImage &Im1, const sor::DImage &Im2, const sor::DImage &Flow)
 {
 	if(warpIm2.matchDimension(Im2)==false)
 		warpIm2.allocate(Im2.width(),Im2.height(),Im2.nchannels());
-	ImageProcessing::warpImageFlow(warpIm2.data(),Im1.data(),Im2.data(),Flow.data(),Im2.width(),Im2.height(),Im2.nchannels());
+	sor::ImageProcessing::warpImageFlow(warpIm2.data(),Im1.data(),Im2.data(),Flow.data(),Im2.width(),Im2.height(),Im2.nchannels());
 }
 
 
 //--------------------------------------------------------------------------------------------------------
 // function to generate mask of the pixels that move inside the image boundary
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::genInImageMask(DImage &mask, const DImage &vx, const DImage &vy,int interval)
+void sor::OpticalFlow::genInImageMask(sor::DImage &mask, const sor::DImage &vx, const sor::DImage &vy,int interval)
 {
 	int imWidth,imHeight;
 	imWidth=vx.width();
@@ -156,7 +156,7 @@ void OpticalFlow::genInImageMask(DImage &mask, const DImage &vx, const DImage &v
 		}
 }
 
-void OpticalFlow::genInImageMask(DImage &mask, const DImage &flow,int interval)
+void sor::OpticalFlow::genInImageMask(sor::DImage &mask, const sor::DImage &flow,int interval)
 {
 	int imWidth,imHeight;
 	imWidth=flow.width();
@@ -191,26 +191,26 @@ void OpticalFlow::genInImageMask(DImage &mask, const DImage &flow,int interval)
 //	u,v:									the current flow field, NOTICE that they are also output arguments
 //	
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::SmoothFlowSOR(const DImage &Im1, const DImage &Im2, DImage &warpIm2, DImage &u, DImage &v, 
+void sor::OpticalFlow::SmoothFlowSOR(const sor::DImage &Im1, const sor::DImage &Im2, sor::DImage &warpIm2, sor::DImage &u, sor::DImage &v, 
 																    double alpha, int nOuterFPIterations, int nInnerFPIterations, int nSORIterations)
 {
-	DImage mask,imdx,imdy,imdt;
+	sor::DImage mask,imdx,imdy,imdt;
 	int imWidth,imHeight,nChannels,nPixels;
 	imWidth=Im1.width();
 	imHeight=Im1.height();
 	nChannels=Im1.nchannels();
 	nPixels=imWidth*imHeight;
 
-	DImage du(imWidth,imHeight),dv(imWidth,imHeight);
-	DImage uu(imWidth,imHeight),vv(imWidth,imHeight);
-	DImage ux(imWidth,imHeight),uy(imWidth,imHeight);
-	DImage vx(imWidth,imHeight),vy(imWidth,imHeight);
-	DImage Phi_1st(imWidth,imHeight);
-	DImage Psi_1st(imWidth,imHeight,nChannels);
+	sor::DImage du(imWidth,imHeight),dv(imWidth,imHeight);
+	sor::DImage uu(imWidth,imHeight),vv(imWidth,imHeight);
+	sor::DImage ux(imWidth,imHeight),uy(imWidth,imHeight);
+	sor::DImage vx(imWidth,imHeight),vy(imWidth,imHeight);
+	sor::DImage Phi_1st(imWidth,imHeight);
+	sor::DImage Psi_1st(imWidth,imHeight,nChannels);
 
-	DImage imdxy,imdx2,imdy2,imdtdx,imdtdy;
-	DImage ImDxy,ImDx2,ImDy2,ImDtDx,ImDtDy;
-	DImage foo1,foo2;
+	sor::DImage imdxy,imdx2,imdy2,imdtdx,imdtdy;
+	sor::DImage ImDxy,ImDx2,ImDy2,ImDtDx,ImDtDy;
+	sor::DImage foo1,foo2;
 
 	double prob1,prob2,prob11,prob22;
 
@@ -461,34 +461,34 @@ void OpticalFlow::SmoothFlowSOR(const DImage &Im1, const DImage &Im2, DImage &wa
 //	u,v:									the current flow field, NOTICE that they are also output arguments
 //	
 //--------------------------------------------------------------------------------------------------------
-void OpticalFlow::SmoothFlowPDE(const DImage &Im1, const DImage &Im2, DImage &warpIm2, DImage &u, DImage &v, 
+void sor::OpticalFlow::SmoothFlowPDE(const sor::DImage &Im1, const sor::DImage &Im2, sor::DImage &warpIm2, sor::DImage &u, sor::DImage &v, 
 																    double alpha, int nOuterFPIterations, int nInnerFPIterations, int nCGIterations)
 {
-	DImage mask,imdx,imdy,imdt;
+	sor::DImage mask,imdx,imdy,imdt;
 	int imWidth,imHeight,nChannels,nPixels;
 	imWidth=Im1.width();
 	imHeight=Im1.height();
 	nChannels=Im1.nchannels();
 	nPixels=imWidth*imHeight;
 
-	DImage du(imWidth,imHeight),dv(imWidth,imHeight);
-	DImage uu(imWidth,imHeight),vv(imWidth,imHeight);
-	DImage ux(imWidth,imHeight),uy(imWidth,imHeight);
-	DImage vx(imWidth,imHeight),vy(imWidth,imHeight);
-	DImage Phi_1st(imWidth,imHeight);
-	DImage Psi_1st(imWidth,imHeight,nChannels);
+	sor::DImage du(imWidth,imHeight),dv(imWidth,imHeight);
+	sor::DImage uu(imWidth,imHeight),vv(imWidth,imHeight);
+	sor::DImage ux(imWidth,imHeight),uy(imWidth,imHeight);
+	sor::DImage vx(imWidth,imHeight),vy(imWidth,imHeight);
+	sor::DImage Phi_1st(imWidth,imHeight);
+	sor::DImage Psi_1st(imWidth,imHeight,nChannels);
 
-	DImage imdxy,imdx2,imdy2,imdtdx,imdtdy;
-	DImage ImDxy,ImDx2,ImDy2,ImDtDx,ImDtDy;
-	DImage A11,A12,A22,b1,b2;
-	DImage foo1,foo2;
+	sor::DImage imdxy,imdx2,imdy2,imdtdx,imdtdy;
+	sor::DImage ImDxy,ImDx2,ImDy2,ImDtDx,ImDtDy;
+	sor::DImage A11,A12,A22,b1,b2;
+	sor::DImage foo1,foo2;
 
 	// compute bicubic interpolation coeff
-	//DImage BicubicCoeff;
+	//sor::DImage BicubicCoeff;
 	//Im2.warpImageBicubicCoeff(BicubicCoeff);
 	double prob1,prob2,prob11,prob22;
 	// variables for conjugate gradient
-	DImage r1,r2,p1,p2,q1,q2;
+	sor::DImage r1,r2,p1,p2,q1,q2;
 	double* rou;
 	rou=new double[nCGIterations];
 
@@ -673,11 +673,11 @@ void OpticalFlow::SmoothFlowPDE(const DImage &Im1, const DImage &Im2, DImage &wa
 			}
 
 			// for debug only, displaying the matrix coefficients
-			//A11.imwrite("A11.bmp",ImageIO::normalized);
-			//A12.imwrite("A12.bmp",ImageIO::normalized);
-			//A22.imwrite("A22.bmp",ImageIO::normalized);
-			//b1.imwrite("b1.bmp",ImageIO::normalized);
-			//b2.imwrite("b2.bmp",ImageIO::normalized);
+			//A11.imwrite("A11.bmp",sor::ImageIO::normalized);
+			//A12.imwrite("A12.bmp",sor::ImageIO::normalized);
+			//A22.imwrite("A22.bmp",sor::ImageIO::normalized);
+			//b1.imwrite("b1.bmp",sor::ImageIO::normalized);
+			//b2.imwrite("b2.bmp",sor::ImageIO::normalized);
 
 			//-----------------------------------------------------------------------
 			// conjugate gradient algorithm
@@ -757,13 +757,13 @@ void OpticalFlow::SmoothFlowPDE(const DImage &Im1, const DImage &Im2, DImage &wa
 		}
 
 	}// end of outer fixed point iteration
-	delete rou;
+	delete[] rou;
 }
 
-void OpticalFlow::estGaussianMixture(const DImage& Im1,const DImage& Im2,GaussianMixture& para,double prior)
+void sor::OpticalFlow::estGaussianMixture(const sor::DImage& Im1,const sor::DImage& Im2,GaussianMixture& para,double prior)
 {
 	int nIterations = 3, nChannels = Im1.nchannels();
-	DImage weight1(Im1),weight2(Im1);
+	sor::DImage weight1(Im1),weight2(Im1);
 	double *total1,*total2;
 	total1 = new double[nChannels];
 	total2 = new double[nChannels];
@@ -814,7 +814,7 @@ void OpticalFlow::estGaussianMixture(const DImage& Im1,const DImage& Im2,Gaussia
 	}
 }
 
-void OpticalFlow::estLaplacianNoise(const DImage& Im1,const DImage& Im2,Vector<double>& para)
+void sor::OpticalFlow::estLaplacianNoise(const sor::DImage& Im1,const sor::DImage& Im2,Vector<double>& para)
 {
 	int nChannels = Im1.nchannels();
 	if(para.dim()!=nChannels)
@@ -850,7 +850,7 @@ void OpticalFlow::estLaplacianNoise(const DImage& Im1,const DImage& Im2,Vector<d
 	}
 }
 
-void OpticalFlow::Laplacian(DImage &output, const DImage &input, const DImage& weight)
+void sor::OpticalFlow::Laplacian(sor::DImage &output, const sor::DImage &input, const sor::DImage& weight)
 {
 	if(output.matchDimension(input)==false)
 		output.allocate(input);
@@ -858,13 +858,13 @@ void OpticalFlow::Laplacian(DImage &output, const DImage &input, const DImage& w
 
 	if(input.matchDimension(weight)==false)
 	{
-		cout<<"Error in image dimension matching OpticalFlow::Laplacian()!"<<endl;
+		cout<<"Error in image dimension matching sor::OpticalFlow::Laplacian()!"<<endl;
 		return;
 	}
 	
 	const _FlowPrecision *inputData=input.data(),*weightData=weight.data();
 	int width=input.width(),height=input.height();
-	DImage foo(width,height);
+	sor::DImage foo(width,height);
 	_FlowPrecision *fooData=foo.data(),*outputData=output.data();
 	
 
@@ -903,17 +903,17 @@ void OpticalFlow::Laplacian(DImage &output, const DImage &input, const DImage& w
 		}
 }
 
-void OpticalFlow::testLaplacian(int dim)
+void sor::OpticalFlow::testLaplacian(int dim)
 {
 	// generate the random weight
-	DImage weight(dim,dim);
+	sor::DImage weight(dim,dim);
 	for(int i=0;i<dim;i++)
 		for(int j=0;j<dim;j++)
 			//weight.data()[i*dim+j]=(double)rand()/RAND_MAX+1;
 			weight.data()[i*dim+j]=1;
 	// go through the linear system;
-	DImage sysMatrix(dim*dim,dim*dim);
-	DImage u(dim,dim),du(dim,dim);
+	sor::DImage sysMatrix(dim*dim,dim*dim);
+	sor::DImage u(dim,dim),du(dim,dim);
 	for(int i=0;i<dim*dim;i++)
 	{
 		u.reset();
@@ -938,7 +938,7 @@ void OpticalFlow::testLaplacian(int dim)
 //--------------------------------------------------------------------------------------
 // function to perfomr coarse to fine optical flow estimation
 //--------------------------------------------------------------------------------------
-void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const DImage &Im1, const DImage &Im2, double alpha, double ratio, int minWidth, 
+void sor::OpticalFlow::Coarse2FineFlow(sor::DImage &vx, sor::DImage &vy, sor::DImage &warpI2,const sor::DImage &Im1, const sor::DImage &Im2, double alpha, double ratio, int minWidth, 
 																	 int nOuterFPIterations, int nInnerFPIterations, int nCGIterations)
 {
 	// first build the pyramid of the two images
@@ -950,7 +950,7 @@ void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const D
 	//if(IsDisplay) cout<<"done!"<<endl;
 	
 	// now iterate from the top level to the bottom
-	DImage Image1,Image2,WarpImage2;
+	sor::DImage Image1,Image2,WarpImage2;
 	//GaussianMixture GMPara(Im1.nchannels()+2);
 
 	// initialize noise
@@ -1007,14 +1007,14 @@ void OpticalFlow::Coarse2FineFlow(DImage &vx, DImage &vy, DImage &warpI2,const D
 	warpI2.threshold();
 }
 
-void OpticalFlow::Coarse2FineFlowLevel(DImage &vx, DImage &vy, DImage &warpI2,const DImage &Im1, const DImage &Im2, double alpha, double ratio, int nLevels, 
+void sor::OpticalFlow::Coarse2FineFlowLevel(sor::DImage &vx, sor::DImage &vy, sor::DImage &warpI2,const sor::DImage &Im1, const sor::DImage &Im2, double alpha, double ratio, int nLevels, 
 																	 int nOuterFPIterations, int nInnerFPIterations, int nCGIterations)
 {
 	// first build the pyramid of the two images
 	GaussianPyramid GPyramid1;
 	GaussianPyramid GPyramid2;
 	GaussianPyramid GFlow;
-	DImage flow;
+	sor::DImage flow;
 	AssembleFlow(vx,vy,flow);
 	//if(IsDisplay) cout<<"Constructing pyramid...";
 	GPyramid1.ConstructPyramidLevels(Im1,ratio,nLevels);
@@ -1027,7 +1027,7 @@ void OpticalFlow::Coarse2FineFlowLevel(DImage &vx, DImage &vy, DImage &warpI2,co
 	//if(IsDisplay) cout<<"done!"<<endl;
 	
 	// now iterate from the top level to the bottom
-	DImage Image1,Image2,WarpImage2;
+	sor::DImage Image1,Image2,WarpImage2;
 
 	// initialize noise
 	switch(noiseModel){
@@ -1076,7 +1076,7 @@ void OpticalFlow::Coarse2FineFlowLevel(DImage &vx, DImage &vy, DImage &warpI2,co
 //---------------------------------------------------------------------------------------
 // function to convert image to feature image
 //---------------------------------------------------------------------------------------
-void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
+void sor::OpticalFlow::im2feature(sor::DImage &imfeature, const sor::DImage &im)
 {
 	int width=im.width();
 	int height=im.height();
@@ -1084,7 +1084,7 @@ void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
 	if(nchannels==1)
 	{
 		imfeature.allocate(im.width(),im.height(),3);
-		DImage imdx,imdy;
+		sor::DImage imdx,imdy;
 		im.dx(imdx,true);
 		im.dy(imdy,true);
 		_FlowPrecision* data=imfeature.data();
@@ -1099,11 +1099,11 @@ void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
 	}
 	else if(nchannels==3)
 	{
-		DImage grayImage;
+		sor::DImage grayImage;
 		im.desaturate(grayImage);
 
 		imfeature.allocate(im.width(),im.height(),5);
-		DImage imdx,imdy;
+		sor::DImage imdx,imdy;
 		grayImage.dx(imdx,true);
 		grayImage.dy(imdy,true);
 		_FlowPrecision* data=imfeature.data();
@@ -1122,9 +1122,9 @@ void OpticalFlow::im2feature(DImage &imfeature, const DImage &im)
 		imfeature.copyData(im);
 }
 
-bool OpticalFlow::LoadOpticalFlow(const char* filename,DImage &flow)
+bool sor::OpticalFlow::LoadOpticalFlow(const char* filename,sor::DImage &flow)
 {
-	Image<unsigned short int> foo;
+	sor::Image<unsigned short int> foo;
 	if(foo.loadImage(filename) == false)
 		return false;
 	if(!flow.matchDimension(foo))
@@ -1137,9 +1137,9 @@ bool OpticalFlow::LoadOpticalFlow(const char* filename,DImage &flow)
 	return true;
 }
 
-bool OpticalFlow::LoadOpticalFlow(ifstream& myfile,DImage& flow)
+bool sor::OpticalFlow::LoadOpticalFlow(ifstream& myfile,sor::DImage& flow)
 {
-	Image<unsigned short int> foo;
+	sor::Image<unsigned short int> foo;
 	if(foo.loadImage(myfile) == false)
 		return false;
 	if(!flow.matchDimension(foo))
@@ -1152,9 +1152,9 @@ bool OpticalFlow::LoadOpticalFlow(ifstream& myfile,DImage& flow)
 	return true;
 }
 
-bool OpticalFlow::SaveOpticalFlow(const DImage& flow, const char* filename)
+bool sor::OpticalFlow::SaveOpticalFlow(const sor::DImage& flow, const char* filename)
 {
-	Image<unsigned short int> foo;
+	sor::Image<unsigned short int> foo;
 	foo.allocate(flow);
 	for(int i =0;i<flow.npixels();i++)
 	{
@@ -1164,9 +1164,9 @@ bool OpticalFlow::SaveOpticalFlow(const DImage& flow, const char* filename)
 	return foo.saveImage(filename);
 }
 
-bool OpticalFlow::SaveOpticalFlow(const DImage& flow,ofstream& myfile)
+bool sor::OpticalFlow::SaveOpticalFlow(const sor::DImage& flow,ofstream& myfile)
 {
-	Image<unsigned short int> foo;
+	sor::Image<unsigned short int> foo;
 	foo.allocate(flow);
 	for(int i =0;i<flow.npixels();i++)
 	{
@@ -1177,14 +1177,14 @@ bool OpticalFlow::SaveOpticalFlow(const DImage& flow,ofstream& myfile)
 }
 
 /**
-bool OpticalFlow::showFlow(const DImage& flow,const char* filename)
+bool sor::OpticalFlow::showFlow(const sor::DImage& flow,const char* filename)
 {
 	if(flow.nchannels()!=1)
 	{
 		cout<<"The flow must be a single channel image!"<<endl;
 		return false;
 	}
-	Image<unsigned char> foo;
+	sor::Image<unsigned char> foo;
 	foo.allocate(flow.width(),flow.height());
 	double Max = flow.max();
 	double Min = flow.min();

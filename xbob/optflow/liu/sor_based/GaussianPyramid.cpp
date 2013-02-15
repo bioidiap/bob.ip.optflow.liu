@@ -1,12 +1,12 @@
 #include "GaussianPyramid.h"
 #include "math.h"
 
-GaussianPyramid::GaussianPyramid(void)
+sor::GaussianPyramid::GaussianPyramid(void)
 {
 	ImPyramid=NULL;
 }
 
-GaussianPyramid::~GaussianPyramid(void)
+sor::GaussianPyramid::~GaussianPyramid(void)
 {
 	if(ImPyramid!=NULL)
 		delete []ImPyramid;
@@ -16,7 +16,7 @@ GaussianPyramid::~GaussianPyramid(void)
 // function to construct the pyramid
 // this is the slow way
 //---------------------------------------------------------------------------------------
-/*void GaussianPyramid::ConstructPyramid(const DImage &image, double ratio, int minWidth)
+/*void sor::GaussianPyramid::ConstructPyramid(const sor::DImage &image, double ratio, int minWidth)
 {
 	// the ratio cannot be arbitrary numbers
 	if(ratio>0.98 || ratio<0.4)
@@ -25,12 +25,12 @@ GaussianPyramid::~GaussianPyramid(void)
 	nLevels=log((double)minWidth/image.width())/log(ratio);
 	if(ImPyramid!=NULL)
 		delete []ImPyramid;
-	ImPyramid=new DImage[nLevels];
+	ImPyramid=new sor::DImage[nLevels];
 	ImPyramid[0].copyData(image);
 	double baseSigma=(1/ratio-1);
 	for(int i=1;i<nLevels;i++)
 	{
-		DImage foo;
+		sor::DImage foo;
 		double sigma=baseSigma*i;
 		image.GaussianSmoothing(foo,sigma,sigma*2.5);
 		foo.imresize(ImPyramid[i],pow(ratio,i));
@@ -41,7 +41,7 @@ GaussianPyramid::~GaussianPyramid(void)
 // function to construct the pyramid
 // this is the fast way
 //---------------------------------------------------------------------------------------
-void GaussianPyramid::ConstructPyramid(const DImage &image, double ratio, int minWidth)
+void sor::GaussianPyramid::ConstructPyramid(const sor::DImage &image, double ratio, int minWidth)
 {
 	// the ratio cannot be arbitrary numbers
 	if(ratio>0.98 || ratio<0.4)
@@ -50,14 +50,14 @@ void GaussianPyramid::ConstructPyramid(const DImage &image, double ratio, int mi
 	nLevels=log((double)minWidth/image.width())/log(ratio);
 	if(ImPyramid!=NULL)
 		delete []ImPyramid;
-	ImPyramid=new DImage[nLevels];
+	ImPyramid=new sor::DImage[nLevels];
 	ImPyramid[0].copyData(image);
 	double baseSigma=(1/ratio-1);
 	int n=log(0.25)/log(ratio);
 	double nSigma=baseSigma*n;
 	for(int i=1;i<nLevels;i++)
 	{
-		DImage foo;
+		sor::DImage foo;
 		if(i<=n)
 		{
 			double sigma=baseSigma*i;
@@ -73,7 +73,7 @@ void GaussianPyramid::ConstructPyramid(const DImage &image, double ratio, int mi
 	}
 }
 
-void GaussianPyramid::ConstructPyramidLevels(const DImage &image, double ratio, int _nLevels)
+void sor::GaussianPyramid::ConstructPyramidLevels(const sor::DImage &image, double ratio, int _nLevels)
 {
 	// the ratio cannot be arbitrary numbers
 	if(ratio>0.98 || ratio<0.4)
@@ -81,14 +81,14 @@ void GaussianPyramid::ConstructPyramidLevels(const DImage &image, double ratio, 
 	nLevels = _nLevels;
 	if(ImPyramid!=NULL)
 		delete []ImPyramid;
-	ImPyramid=new DImage[nLevels];
+	ImPyramid=new sor::DImage[nLevels];
 	ImPyramid[0].copyData(image);
 	double baseSigma=(1/ratio-1);
 	int n=log(0.25)/log(ratio);
 	double nSigma=baseSigma*n;
 	for(int i=1;i<nLevels;i++)
 	{
-		DImage foo;
+		sor::DImage foo;
 		if(i<=n)
 		{
 			double sigma=baseSigma*i;
@@ -105,7 +105,7 @@ void GaussianPyramid::ConstructPyramidLevels(const DImage &image, double ratio, 
 }
 
 /**
-void GaussianPyramid::displayTop(const char *filename)
+void sor::GaussianPyramid::displayTop(const char *filename)
 {
 	ImPyramid[nLevels-1].imwrite(filename);
 }

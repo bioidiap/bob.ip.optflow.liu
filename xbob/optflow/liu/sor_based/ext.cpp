@@ -17,12 +17,12 @@ using namespace boost::python;
  * Temporarily assigns the memory storage from the blitz array to the double
  * image type that is used by Liu's framework.
  */
-static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
+static void bz2dimage(blitz::Array<double,2>& bz, sor::DImage& di) {
   di.clear();
   di.imWidth = bz.extent(1);
   di.imHeight = bz.extent(0);
   di.nChannels = 1;
-  di.colorType = GRAY;
+  di.colorType = sor::GRAY;
   di.computeDimension();
   di.pData = bz.data();
 }
@@ -30,9 +30,9 @@ static void bz2dimage(blitz::Array<double,2>& bz, DImage& di) {
 /**
  * Copies and transposes 3D array data
  */
-static void bz2dimage(blitz::Array<double,3>& bz, DImage& di) {
+static void bz2dimage(blitz::Array<double,3>& bz, sor::DImage& di) {
   di.clear();
-  di.colorType = RGB;
+  di.colorType = sor::RGB;
   di.ConvertFromMatlab<double>(bz.data(), bz.extent(2), bz.extent(1),
       bz.extent(0));
 }
@@ -49,8 +49,8 @@ static tuple coarse2fine_flow (
     ) {
 
   bob::core::array::typeinfo info = i1.type();
-  DImage di1;
-  DImage di2;
+  sor::DImage di1;
+  sor::DImage di2;
 
   if (info.nd == 2) {
 
@@ -87,12 +87,12 @@ static tuple coarse2fine_flow (
   }
 
   //Output arrays
-  DImage du;
-  DImage dv;
-  DImage dwarped_i2;
+  sor::DImage du;
+  sor::DImage dv;
+  sor::DImage dwarped_i2;
 
   //Calls Optical Flow estimation
-  OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
+  sor::OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
       alpha, ratio, minWidth, nOuterFPIterations, nInnerFPIterations,
       nSORIterations);
 
@@ -130,12 +130,14 @@ static tuple coarse2fine_flow (
   return retval;
 }
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(coarse2fine_flow_overloads, coarse2fine_flow, 2, 8)
+namespace sor {
+  BOOST_PYTHON_FUNCTION_OVERLOADS(coarse2fine_flow_overloads, coarse2fine_flow, 2, 8)
+}
 
 BOOST_PYTHON_MODULE(_sor_based) {
   bob::python::setup_python("Bindings to Ce Liu's Optical Flow dense estimator (using Successive-Over-Relaxation)");
 
-  boost::python::def("flow", coarse2fine_flow, coarse2fine_flow_overloads((
+  boost::python::def("flow", coarse2fine_flow, sor::coarse2fine_flow_overloads((
           boost::python::arg("i1"), 
           boost::python::arg("i2"), 
           boost::python::arg("alpha")=1.0, 

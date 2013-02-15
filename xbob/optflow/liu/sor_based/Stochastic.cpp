@@ -3,15 +3,15 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-CStochastic::CStochastic(void)
+sor::CStochastic::CStochastic(void)
 {
 }
 
-CStochastic::~CStochastic(void)
+sor::CStochastic::~CStochastic(void)
 {
 }
 
-void CStochastic::ConvertInt2String(int x,char* string,int BitNumber)
+void sor::CStochastic::ConvertInt2String(int x,char* string,int BitNumber)
 {
 	int i,Base=1;
 	for(i=1;i<BitNumber;i++)
@@ -25,12 +25,12 @@ void CStochastic::ConvertInt2String(int x,char* string,int BitNumber)
 	string[i]='\0';
 }
 
-double CStochastic::UniformSampling()
+double sor::CStochastic::UniformSampling()
 {
 	return (double)rand()/(((double)RAND_MAX)+1);
 }
 
-int CStochastic::UniformSampling(int R)
+int sor::CStochastic::UniformSampling(int R)
 {
 	int Index=(double)UniformSampling()*R;
 	if(Index>R-1)
@@ -38,7 +38,7 @@ int CStochastic::UniformSampling(int R)
 	return Index;
 }
 
-double CStochastic::GaussianSampling()
+double sor::CStochastic::GaussianSampling()
 {
 	int i;
 	double result=0;
@@ -49,7 +49,7 @@ double CStochastic::GaussianSampling()
 }
 
 
-double CStochastic::GetMean(double* signal,int length)
+double sor::CStochastic::GetMean(double* signal,int length)
 {
 	double mean=0;
 	int i;
@@ -59,7 +59,7 @@ double CStochastic::GetMean(double* signal,int length)
 	return mean;
 }
 
-int CStochastic::Sampling(double* Density,int NumSamples)
+int sor::CStochastic::Sampling(double* Density,int NumSamples)
 {
 	double RandNumber=UniformSampling();
 	int i;
@@ -73,7 +73,7 @@ int CStochastic::Sampling(double* Density,int NumSamples)
 	return NumSamples-1;
 }
 
-void CStochastic::Generate1DGaussian(double* pGaussian,int size,double sigma)
+void sor::CStochastic::Generate1DGaussian(double* pGaussian,int size,double sigma)
 {
 	int i;
 	if(sigma==0)
@@ -82,7 +82,7 @@ void CStochastic::Generate1DGaussian(double* pGaussian,int size,double sigma)
 		pGaussian[i+size]=exp(-(double)i*i/(2*sigma));
 }
 
-void CStochastic::Generate2DGaussian(double* pGaussian,int WinSize,double sigma)
+void sor::CStochastic::Generate2DGaussian(double* pGaussian,int WinSize,double sigma)
 {
 	int i,j,WinLength=WinSize*2+1;
 	double Sigma;
@@ -97,7 +97,7 @@ void CStochastic::Generate2DGaussian(double* pGaussian,int WinSize,double sigma)
 	Normalize(WinLength*WinLength,pGaussian);
 }
 
-double CStochastic::entropy(double* pDensity,int n)
+double sor::CStochastic::entropy(double* pDensity,int n)
 {
 	double result=0;
 	int i;
