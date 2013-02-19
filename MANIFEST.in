@@ -1,3 +1,4 @@
 include README.rst buildout.cfg bootstrap.py
 recursive-include xbob *.cpp *.h *.png
 recursive-include matlab *.txt *.m *.h *.cpp *.asv
+exclude .installed.cfg
