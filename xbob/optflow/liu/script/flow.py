@@ -171,7 +171,7 @@ def main(user_input=None):
         sys.stdout.write('Loading only %d frames from %s...' % \
             (args.frames, args.input[0]))
         sys.stdout.flush()
-        sys.stdout.write('Ok')
+        sys.stdout.write('Ok\n')
         sys.stdout.flush()
 
       input = bob.io.VideoReader(args.input[0])[:args.frames]
