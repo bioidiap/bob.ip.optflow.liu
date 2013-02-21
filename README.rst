@@ -94,6 +94,31 @@ Reproducible Research Notes
 Some notes on being able to reproduce consistent results through the different
 platforms supported by `Bob`_.
 
+Differences between Matlab and Bob/Python ports
+===============================================
+
+I have detected inconsistencies between output produced by these pythonic
+bindings and Ce Liu's Matlab-based implementation. In all instances, these
+differences come from differences in either the gray-scaling conversion and/or
+the decompression routines for the test images and movies. Once a precise input
+is given in double-precision gray-scale, both bindings (ours and Ce Liu's
+Matlab ones) give out **exactly** the same output.
+
+This means that you should expect precision problems if you feed in videos or
+lossy input formats such as JPEG images. If you input HDF5 files, Matlab
+``.mat`` files or any other data in formats which are **not** subject to lossy
+compression/decompression, this data is pre-grayscaled **and** stored in
+double-precision floating point numbers, the output is consistently the same,
+no matter which environment you use.
+
+If you input data which is not double-precision gray-scale, then it is (1)
+converted to double-precision representation and then (2) gray-scaled. These
+steps are taken in this order in both bindings. Depending on which you are
+using (Bob/Python *versus* Matlab), the results will be slightly different.
+This small differences in the input to the flow estimation engine will make
+Liu's framework give (hopefully slightly) different output. The outputs should
+be comparable though, but your mileage may vary.
+
 New SOR-based Implementation
 ============================
 
