@@ -21,12 +21,13 @@ If you decide to use this port on your publication, we kindly ask you to cite
 developed::
 
     @inproceedings{Anjos_ACMMM_2012,
-        author = {A. Anjos AND L. El Shafey AND R. Wallace AND M. G\"unther AND C. McCool AND S. Marcel},
-        title = {Bob: a free signal processing and machine learning toolbox for researchers},
-        year = {2012},
-        month = oct,
-        booktitle = {20th ACM Conference on Multimedia Systems (ACMMM), Nara, Japan},
-        publisher = {ACM Press},
+      author = {A. Anjos and L. El Shafey and R. Wallace and M. G\"unther and C. McCool and S. Marcel},
+      title = {Bob: a free signal processing and machine learning toolbox for researchers},
+      year = {2012},
+      month = oct,
+      booktitle = {20th ACM Conference on Multimedia Systems (ACMMM), Nara, Japan},
+      publisher = {ACM Press},
+      url = {http://publications.idiap.ch/downloads/papers/2012/Anjos_Bob_ACMMM12.pdf},
     }
 
 `Here is a link <http://people.csail.mit.edu/celiu/OpticalFlow/>`_ to Liu's
