@@ -240,7 +240,7 @@ namespace sor {
       memset(pMean,0,sizeof(T2)*Dim);
       bool IsWeightLoaded;
       double Sum;
-      if(pWeight=NULL)
+      if(pWeight==NULL)
         IsWeightLoaded=false;
       else
         IsWeightLoaded=true;

@@ -810,7 +810,7 @@ void sor::OpticalFlow::estGaussianMixture(const sor::DImage& Im1,const sor::DIma
 			para.beta[k]   = sqrt(para.beta[k]/total2[k])*(1-prior)+0.3*prior; // regularize beta
 		}
 		para.square();
-		count = count;
+		//count = count;
 	}
 }
 
