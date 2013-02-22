@@ -8,7 +8,7 @@
 
 from setuptools import setup, find_packages, dist
 dist.Distribution(dict(setup_requires='xbob.extension'))
-from xbob.extension import Extension
+from xbob.extension import Extension, build_ext
 
 setup(
 
@@ -43,6 +43,10 @@ setup(
       'console_scripts': [
         'optflow_liu.py = xbob.optflow.liu.script.flow:main',
         ],
+      },
+
+    cmdclass = {
+      'build_ext': build_ext,
       },
 
     ext_modules=[
