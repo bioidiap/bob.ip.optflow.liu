@@ -13,7 +13,7 @@ from xbob.extension import Extension, build_ext
 setup(
 
     name="xbob.optflow.liu",
-    version="1.1.0",
+    version="1.1.1",
     description="Python bindings to the optical flow framework by C. Liu",
     license="GPLv3",
     author='Andre Anjos',
