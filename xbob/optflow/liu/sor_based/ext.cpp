@@ -6,8 +6,15 @@
  */
 
 #include <boost/python.hpp>
-#include <bob/core/python/gil.h>
-#include <bob/core/python/ndarray.h>
+
+#include <bob/config.h>
+#ifdef BOB_API_VERSION
+#  include <bob/python/gil.h>
+#  include <bob/python/ndarray.h>
+#else
+#  include <bob/core/python/gil.h>
+#  include <bob/core/python/ndarray.h>
+#endif
 
 #include "OpticalFlow.h"
 
