@@ -17,3 +17,4 @@ build
 reference/
 *.mex*
 src/
+xbob.extension*.egg
