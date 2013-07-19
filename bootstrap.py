@@ -35,7 +35,7 @@ Bootstraps a buildout-based project.
 Simply run this script in a directory containing a buildout.cfg, using the
 Python that you want bin/buildout to use.
 
-Note that by using --find-links to point to local resources, you can keep 
+Note that by using --find-links to point to local resources, you can keep
 this script from going over the network.
 '''
 
@@ -89,6 +89,19 @@ except ImportError:
     for path in sys.path:
         if path not in pkg_resources.working_set.entries:
             pkg_resources.working_set.add_entry(path)
+
+######################################################################
+# Try to best guess the version of buildout given setuptools
+if options.version is None:
+
+  try:
+    from distutils.version import LooseVersion
+    package = pkg_resources.require('setuptools')[0]
+    v = LooseVersion(package.version)
+    if v < LooseVersion('0.7'):
+      options.version = '2.1.1'
+  except:
+    pass
 
 ######################################################################
 # Install buildout
