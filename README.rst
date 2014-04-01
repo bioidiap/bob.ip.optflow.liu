@@ -35,43 +35,47 @@ original Matlab port.
 Installation
 ------------
 
-You can just add a dependence for ``xbob.optflow.liu`` on your ``setup.py`` to
-automatically download and have this package available at your satellite
-package. This works well if Bob is installed centrally at your machine.
+Install it through normal means, via PyPI or use ``zc.buildout`` to bootstrap
+the package and run test units.
 
-Otherwise, you will need to tell ``buildout`` how to build the package locally
-and how to find Bob. For that, just add a recipe to your buildout that will
-fetch the package and compile it locally, setting the buildout variable
-``prefixes`` to where Bob is installed (a build directory will also work). For
-example::
+Testing
+-------
 
-  [buildout]
-  parts = xbob.optflow.liu <other parts here...>
-  prefixes = /Users/andre/work/bob/build/debug
-  ...
+You can run a set of tests using the nose test runner::
 
-  [xbob.optflow.liu]
-  recipe = xbob.buildout:develop
+  $ nosetests -sv xbob.sp
 
-  ...
+.. warning::
+
+   If Bob <= 1.2.1 is installed on your python path, nose will automatically
+   load the old version of the insulate plugin available in Bob, which will
+   trigger the loading of incompatible shared libraries (from Bob itself), in
+   to your working binary. This will cause a stack corruption. Either remove
+   the centrally installed version of Bob, or build your own version of Python
+   in which Bob <= 1.2.1 is not installed.
+
+You can run our documentation tests using sphinx itself::
+
+  $ sphinx-build -b doctest doc sphinx
+
+You can test overall test coverage with::
+
+  $ nosetests --with-coverage --cover-package=xbob.sp
+
+The ``coverage`` egg must be installed for this to work properly.
 
 Development
 -----------
 
-To develop these bindings, you will need the open-source library `Bob`_
-installed somewhere. At least version 1.1.0 of Bob is required. If you have
-compiled Bob yourself and installed it on a non-standard location, you will
-need to note down the path leading to the root of that installation.
-
-Just type::
+To develop this package, install using ``zc.buildout``, using the buildout
+configuration found on the root of the package::
 
   $ python bootstrap.py
+  ...
   $ ./bin/buildout
 
-If Bob is installed in a non-standard location, edit the file ``buildout.cfg``
-to set the root to Bob's local installation path. Remember to use the **same
-python interpreter** that was used to compile Bob, then execute the same steps
-as above.
+Tweak the options in ``buildout.cfg`` to disable/enable verbosity and debug
+builds.
 
 Usage
 -----
