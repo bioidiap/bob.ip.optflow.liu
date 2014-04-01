@@ -1,3 +1,18 @@
+.. vim: set fileencoding=utf-8 :
+.. Andre Anjos <andre.anjos@idiap.ch>
+.. Tue  1 Apr 12:32:06 2014 CEST
+
+.. image:: https://travis-ci.org/bioidiap/xbob.ip.optflow.liu.svg?branch=master
+   :target: https://travis-ci.org/bioidiap/xbob.ip.optflow.liu
+.. image:: https://coveralls.io/repos/bioidiap/xbob.ip.optflow.liu/badge.png
+   :target: https://coveralls.io/r/bioidiap/xbob.ip.optflow.liu
+.. image:: http://img.shields.io/github/tag/bioidiap/xbob.ip.optflow.liu.png
+   :target: https://github.com/bioidiap/xbob.ip.optflow.liu
+.. image:: http://img.shields.io/pypi/v/xbob.ip.optflow.liu.png
+   :target: https://pypi.python.org/pypi/xbob.ip.optflow.liu
+.. image:: http://img.shields.io/pypi/dm/xbob.ip.optflow.liu.png
+   :target: https://pypi.python.org/pypi/xbob.ip.optflow.liu
+
 =================================================
  Python Bindings to Liu's Optical Flow Framework
 =================================================

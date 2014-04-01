@@ -7,8 +7,11 @@
 """
 
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires=['xbob.blitz']))
+dist.Distribution(dict(setup_requires=['xbob.blitz', 'xbob.io']))
 from xbob.blitz.extension import Extension
+import xbob.io
+
+include_dirs = [xbob.io.get_include()]
 
 packages = []
 version = '1.2.0a0'
@@ -56,25 +59,28 @@ setup(
           ],
         version = version,
         packages = packages,
+        include_dirs = include_dirs,
         ),
       Extension("xbob.ip.optflow.liu._sor_based",
         [
-          "xbob/ip/optflow/liu/sor_based/ext.cpp",
           "xbob/ip/optflow/liu/sor_based/OpticalFlow.cpp",
           "xbob/ip/optflow/liu/sor_based/GaussianPyramid.cpp",
           "xbob/ip/optflow/liu/sor_based/Stochastic.cpp",
+          "xbob/ip/optflow/liu/sor_based/main.cpp",
           ],
         packages = packages,
         version = version,
+        include_dirs = include_dirs,
         ),
       Extension("xbob.ip.optflow.liu._cg_based",
         [
-          "xbob/optflow/liu/cg_based/ext.cpp",
-          "xbob/optflow/liu/cg_based/OpticalFlow.cpp",
-          "xbob/optflow/liu/cg_based/GaussianPyramid.cpp",
+          "xbob/ip/optflow/liu/cg_based/OpticalFlow.cpp",
+          "xbob/ip/optflow/liu/cg_based/GaussianPyramid.cpp",
+          "xbob/ip/optflow/liu/cg_based/main.cpp",
           ],
         packages = packages,
         version = version,
+        include_dirs = include_dirs,
         ),
       ],
 
