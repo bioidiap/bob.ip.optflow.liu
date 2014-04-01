@@ -4,9 +4,8 @@
 
 This package is a simple Boost.Python wrapper to the open-source Optical Flow
 estimator developed by C. Liu during his Ph.D. The code was originally
-conceived to operate over Matlab. This is a Python/`Bob
-<http://www.idiap.ch/software/bob/>`_ port. If you use this code, the author
-asks you to cite the following paper::
+conceived to operate over Matlab. This is a Python/`Bob`_ port. If you use this
+code, the author asks you to cite his thesis::
 
     @thesis{Liu_PHD_2009,
       title = {{Beyond Pixels: Exploring New Representations and Applications for Motion Analysis}},
@@ -30,8 +29,8 @@ developed::
       url = {http://publications.idiap.ch/downloads/papers/2012/Anjos_Bob_ACMMM12.pdf},
     }
 
-`Here is a link <http://people.csail.mit.edu/celiu/OpticalFlow/>`_ to Liu's
-homepage with details on the code, also displaying the original Matlab port.
+Here is a link `Liu's homepage`_ with details on the code, also displaying the
+original Matlab port.
 
 Installation
 ------------
@@ -59,11 +58,10 @@ example::
 Development
 -----------
 
-To develop these bindings, you will need the open-source library `Bob
-<http://www.idiap.ch/software/bob/>`_ installed somewhere. At least version
-1.1.0 of Bob is required. If you have compiled Bob yourself and installed it on
-a non-standard location, you will need to note down the path leading to the
-root of that installation.
+To develop these bindings, you will need the open-source library `Bob`_
+installed somewhere. At least version 1.1.0 of Bob is required. If you have
+compiled Bob yourself and installed it on a non-standard location, you will
+need to note down the path leading to the root of that installation.
 
 Just type::
 
@@ -139,7 +137,7 @@ results are at least consistent between runs. I'm not sure about their
 correctness. Ce Liu has been informed and should be working on it soon
 enough (today is 14.Nov.2012).
 
-To access this implementation, use `xbob.optflow.liu.sor_flow`.
+To access this implementation, use ``xbob.optflow.liu.sor_flow``.
 
 Access to the MATLAB code
 =========================
@@ -157,10 +155,9 @@ Matlab code, you must::
 
 At this point, the MEX is compiled and ready to be used. You will find 2
 routines on the directory: ``flowimage`` and ``flowmovie``. They can be used to
-process single images or movie files. They both produce `HDF5
-<http://www.hdfgroup.org/HDF5/>`_ files that can be used as test input for this
-package's test suite, or for inspection (use ``h5dump`` to look into the file
-contents).
+process single images or movie files. They both produce `HDF5`_ files that can
+be used as test input for this package's test suite, or for inspection (use
+``h5dump`` to look into the file contents).
 
 Here is an example of usage for the Matlab function ``flowimage``::
 
@@ -173,7 +170,7 @@ calculated for the ``table`` example, i.e. between images ``table1.png`` and
 ``table2.png``. The input images are pre-gray-scaled and are taken from
 the directory ``../../xbob/optflow/liu/data/gray``, following your command.
 
-You will find more examples on this directory and on the 
+You will find more examples on this directory and on the
 ``../../xbob/optflow/liu/data/gray`` directory.
 
 .. note::
@@ -187,3 +184,10 @@ You will find more examples on this directory and on the
   The example images are coded in PNG format so that they don't suffer from
   compression/decompression problems and can be read the same way in any
   platform or implementation.
+
+.. Place your references here:
+
+.. _Our Package: http://pypi.python.org/pypi/xbob.optflow.liu
+.. _Bob: http://www.idiap.ch/software/bob/
+.. _Liu's Homepage: http://people.csail.mit.edu/celiu/OpticalFlow/
+.. _HDF5: http://www.hdfgroup.org/HDF5/

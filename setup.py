@@ -7,19 +7,22 @@
 """
 
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires='xbob.extension'))
-from xbob.extension import Extension, build_ext
+dist.Distribution(dict(setup_requires=['xbob.blitz']))
+from xbob.blitz.extension import Extension
+
+packages = []
+version = '1.2.0a0'
 
 setup(
 
-    name="xbob.optflow.liu",
-    version="1.1.3",
+    name="xbob.ip.optflow.liu",
+    version=version,
     description="Python bindings to the optical flow framework by C. Liu",
     license="GPLv3",
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
     long_description=open('README.rst').read(),
-    url='http://pypi.python.org/pypi/xbob.optflow.liu',
+    url='https://github.com/bioidiap/xbob.ip.optflow.liu',
 
     packages=find_packages(),
     include_package_data=True,
@@ -27,17 +30,14 @@ setup(
 
     namespace_packages=[
       "xbob",
-      "xbob.optflow",
-      ],
-
-    setup_requires = [
-      'xbob.extension'
+      "xbob.ip",
+      "xbob.ip.optflow",
       ],
 
     install_requires=[
       'setuptools',
-      'bob',
-      ],
+      'xbob.blitz',
+    ],
 
     entry_points = {
       'console_scripts': [
@@ -49,22 +49,33 @@ setup(
       'build_ext': build_ext,
       },
 
-    ext_modules=[
-      Extension("xbob.optflow.liu._sor_based", #new implementation
+    ext_modules = [
+      Extension("xbob.ip.optflow.liu.version",
         [
-          "xbob/optflow/liu/sor_based/ext.cpp",
-          "xbob/optflow/liu/sor_based/OpticalFlow.cpp",
-          "xbob/optflow/liu/sor_based/GaussianPyramid.cpp",
-          "xbob/optflow/liu/sor_based/Stochastic.cpp",
-        ],
+          "xbob/ip/optflow/liu/version.cpp",
+          ],
+        version = version,
+        packages = packages,
         ),
-      Extension("xbob.optflow.liu._cg_based", #old implementation
+      Extension("xbob.ip.optflow.liu._sor_based",
+        [
+          "xbob/ip/optflow/liu/sor_based/ext.cpp",
+          "xbob/ip/optflow/liu/sor_based/OpticalFlow.cpp",
+          "xbob/ip/optflow/liu/sor_based/GaussianPyramid.cpp",
+          "xbob/ip/optflow/liu/sor_based/Stochastic.cpp",
+          ],
+        packages = packages,
+        version = version,
+        ),
+      Extension("xbob.ip.optflow.liu._cg_based",
         [
           "xbob/optflow/liu/cg_based/ext.cpp",
           "xbob/optflow/liu/cg_based/OpticalFlow.cpp",
           "xbob/optflow/liu/cg_based/GaussianPyramid.cpp",
-        ],
-        )
+          ],
+        packages = packages,
+        version = version,
+        ),
       ],
 
     classifiers = [
@@ -73,6 +84,7 @@ setup(
       'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
       'Natural Language :: English',
       'Programming Language :: Python',
+      'Programming Language :: Python :: 3',
       'Topic :: Scientific/Engineering :: Artificial Intelligence',
       'Topic :: Scientific/Engineering :: Image Recognition',
       ],
