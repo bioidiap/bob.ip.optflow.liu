@@ -7,9 +7,8 @@
 """
 
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires=['xbob.blitz', 'xbob.io']))
+dist.Distribution(dict(setup_requires=['xbob.blitz']))
 from xbob.blitz.extension import Extension
-import xbob.io
 
 include_dirs = [xbob.io.get_include()]
 
@@ -40,6 +39,7 @@ setup(
     install_requires=[
       'setuptools',
       'xbob.blitz',
+      'xbob.io',
     ],
 
     entry_points = {
