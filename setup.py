@@ -41,7 +41,7 @@ setup(
 
     entry_points = {
       'console_scripts': [
-        'optflow_liu.py = xbob.optflow.liu.script.flow:main',
+        'xbob_of_liu.py = xbob.ip.optflow.liu.script.flow:main',
         ],
       },
 

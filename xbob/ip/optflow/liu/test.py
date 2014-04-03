@@ -21,10 +21,14 @@ def F(name, f):
 
 INPUT_VIDEO = F('xbob.io', 'test.mov')
 
-def run_for(sample, refdir):
+def run_for(sample, method):
 
-  f = xbob.io.HDF5File(os.path.join(refdir, '%s.hdf5' % sample))
-  method = sor.flow if f.get_attribute('method', 'uv') == 'SOR' else cg.flow
+  refdir = sample.split(os.sep)
+  refdir.insert(1, method)
+  refdir = os.sep.join(refdir)
+
+  f = xbob.io.HDF5File(F(__name__, refdir + '.hdf5'))
+  method = sor.flow if method == 'sor' else cg.flow
 
   # the reference flow field to use
   uv = f.read('uv')
@@ -54,28 +58,28 @@ def run_for(sample, refdir):
 
 @nose.tools.nottest
 def test_car_gray_SOR():
-  run_for('gray/car', 'reference/sor_based')
+  run_for('gray/car', 'sor')
 
 def test_table_gray_SOR():
-  run_for('gray/table', 'reference/sor_based')
+  run_for('gray/table', 'sor')
 
 def test_table_gray_CG():
-  run_for('gray/table', 'reference/cg_based')
+  run_for('gray/table', 'cg')
 
 @nose.tools.nottest
 def test_simple_gray_SOR():
-  run_for('gray/simple', 'reference/sor_based')
+  run_for('gray/simple', 'sor')
 
 @nose.tools.nottest
 def test_complex_gray_SOR():
-  run_for('gray/complex', 'reference/sor_based')
+  run_for('gray/complex', 'sor')
 
 # Note: color + SOR not working for the time being. Ce Liu notified -
 # 13.11.2012
 def test_car_color_CG():
-  run_for('color/car', 'reference/cg_based')
+  run_for('color/car', 'cg')
 
-def external_run(sample, refdir):
+def external_run(sample, method):
   from .script import flow
 
   # prepare temporary file
@@ -86,7 +90,11 @@ def external_run(sample, refdir):
   os.unlink(out)
 
   try:
-    f = xbob.io.HDF5File(os.path.join(refdir, sample + '.hdf5'))
+    refdir = sample.split(os.sep)
+    refdir.insert(1, method)
+    refdir = os.sep.join(refdir)
+
+    f = xbob.io.HDF5File(F(__name__, refdir + '.hdf5'))
 
     # the values of parameters used for this flow field estimation
     alpha = f.get_attribute('alpha', 'uv')
@@ -125,22 +133,22 @@ def external_run(sample, refdir):
   finally:
     if os.path.exists(out): os.unlink(out)
 
-def test_car_gray_sor_script():
-  external_run('gray/complex', 'reference/sor_based')
+def test_table_gray_sor_script():
+  external_run('gray/table', 'sor')
 
 # Note: color + SOR not working for the time being. Ce Liu notified -
 # 13.11.2012
 @nose.tools.nottest
 def test_table_color_sor_script():
-  external_run('gray/table', 'reference/sor_based')
+  external_run('gray/table', 'sor')
 
 @nose.tools.nottest
 def test_simple_gray_cg_script():
-  external_run('gray/simple', 'reference/cg_based')
+  external_run('gray/simple', 'cg')
 
 @nose.tools.nottest
 def test_rubberwhale_color_cg_script():
-  external_run('color/rubberwhale', 'reference/cg_based')
+  external_run('color/rubberwhale', 'cg')
 
 @nose.tools.nottest
 def test_video_script():

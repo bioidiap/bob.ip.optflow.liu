@@ -119,8 +119,7 @@ be used as test input for this package's test suite, or for inspection (use
 
 Here is an example of usage for the Matlab function ``flowimage``::
 
-  $ matlab
-  ...
+  $ matlab -nodisplay -nodesktop -nojvm
   >> flowimage ../../xbob/ip/optflow/liu/data/gray table .
 
 This will generate a file called ``table.hdf5`` that contains the flow
