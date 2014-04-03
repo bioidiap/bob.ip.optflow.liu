@@ -13,7 +13,7 @@ Pretty simple, just do something like:
 .. code-block:: python
 
    import bob
-   from xbob.optflow.liu.cg import flow
+   from xbob.ip.optflow.liu.cg import flow
    ...
    (u, v, warped) = flow(image1, image2)
 
@@ -24,7 +24,7 @@ implementation from Liu's homepage. To do so, do the following instead:
 .. code-block:: python
 
    import bob
-   from xbob.optflow.liu.sor import flow
+   from xbob.ip.optflow.liu.sor import flow
    ...
    (u, v, warped) = flow(image1, image2)
 
