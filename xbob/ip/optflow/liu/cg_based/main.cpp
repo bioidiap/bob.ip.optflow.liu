@@ -25,11 +25,11 @@ static void bz2dimage(PyBlitzArrayObject* bz, cg::DImage& di) {
     di.imHeight = bz->shape[0];
     di.nChannels = 1;
     di.computeDimension();
-    di.pData = bz->data;
+    di.pData = reinterpret_cast<double*>(bz->data);
   }
   else {
-    di.ConvertFromMatlab<double>(bz->data, bz->shape[2],
-        bz->shape[1], bz->shape[0]);
+    di.ConvertFromMatlab<double>(reinterpret_cast<double*>(bz->data),
+        bz->shape[2], bz->shape[1], bz->shape[0]);
   }
 }
 
@@ -61,7 +61,7 @@ static PyObject* coarse2fine_flow (
       alpha, ratio, minWidth, nOuterFPIterations, nInnerFPIterations,
       nCGIterations);
 
-  if (info.nd == 2) {
+  if (i1->ndim == 2) {
     //Resets input images so we don't get a delete on those
     di1.pData = 0;
     di2.pData = 0;
@@ -69,28 +69,31 @@ static PyObject* coarse2fine_flow (
   //else { for info.nd == 3 we do have to delete! }
 
   //Copies output data back
-  PyObject* u = PyArray_SimpleNew(2, i1->shape, NPY_FLOAT64);
+  Py_ssize_t* shape = i1->shape;
+  if (i1->ndim == 3) shape += 1; //use the last two indices
+
+  PyObject* u = PyArray_SimpleNew(2, shape, NPY_FLOAT64);
   if (!u) return 0;
   auto u_ = make_safe(u);
-  void* u_data = PyArray_DATA(u);
+  void* u_data = PyArray_DATA((PyArrayObject*)u);
   memcpy(u_data, du.pData, sizeof(double)*du.nElements);
 
-  PyObject* v = PyArray_SimpleNew(2, i1->shape, NPY_FLOAT64);
+  PyObject* v = PyArray_SimpleNew(2, shape, NPY_FLOAT64);
   if (!v) return 0;
   auto v_ = make_safe(v);
-  void* v_data = PyArray_DATA(v);
+  void* v_data = PyArray_DATA((PyArrayObject*)v);
   memcpy(v_data, dv.pData, sizeof(double)*dv.nElements);
 
-  PyObject* w2 = PyArray_SimpleNew(2, i1->shape, NPY_FLOAT64);
+  PyObject* w2 = PyArray_SimpleNew(i2->ndim, i2->shape, NPY_FLOAT64);
   if (!w2) return 0;
   auto w2_ = make_safe(w2);
-  void* w2_data = PyArray_DATA(w2);
+  void* w2_data = PyArray_DATA((PyArrayObject*)w2);
 
-  if (info.nd == 2) {
+  if (i1->ndim == 2) {
     memcpy(w2_data, dwarped_i2.pData, sizeof(double)*dwarped_i2.nElements);
   }
   else {
-    dwarped_i2.ConvertToMatlab(static_cast<double*>(w2_data));
+    dwarped_i2.ConvertToMatlab(reinterpret_cast<double*>(w2_data));
   }
 
   return Py_BuildValue("(OOO)", u, v, w2);
@@ -190,45 +193,43 @@ PyObject* flow(PyObject*, PyObject* args, PyObject* kwds) {
         ))
     return 0;
 
-  auto i2_ = make_safe(i2);
-
   PyBlitzArrayObject* tmp = 0;
 
   //make sure i1 is convertible to float64
-  tmp = PyBlitzArray_Cast(i1, NPY_FLOAT64);
+  tmp = (PyBlitzArrayObject*)PyBlitzArray_Cast(i1, NPY_FLOAT64);
   Py_DECREF(i1);
   i1 = tmp;
   if (!i1) return 0;
   auto i1_ = make_safe(i1);
 
   //make sure i2 is convertible to float64
-  tmp = PyBlitzArray_Cast(i2, NPY_FLOAT64);
+  tmp = (PyBlitzArrayObject*)PyBlitzArray_Cast(i2, NPY_FLOAT64);
   Py_DECREF(i2);
   i2 = tmp;
   if (!i2) return 0;
   auto i2_ = make_safe(i2);
 
   //some checks
-  if (i1->ndim != 2 || i1->ndim != 3) {
-    PyErr_SetString(PyExc_TypeError, "method only supports 1D or 2D arrays for input image `i1', but you passed an array with %" PY_FORMAT_SIZE_T "d dimensions", i1->ndim);
+  if (i1->ndim != 2 && i1->ndim != 3) {
+    PyErr_Format(PyExc_TypeError, "method only supports 2D or 3D arrays for input image `i1', but you passed an array with %" PY_FORMAT_SIZE_T "d dimensions", i1->ndim);
     return 0;
   }
 
   if (i1->ndim != i2->ndim) {
-    PyErr_SetString(PyExc_TypeError, "input image arrays must have the same number of dimensions, but image `i1' has %" PY_FORMAT_SIZE_T "d dimensions while image `i2' has %" PY_FORMAT_SIZE_T "d", i1->ndim, i2->ndim);
+    PyErr_Format(PyExc_TypeError, "input image arrays must have the same number of dimensions, but image `i1' has %" PY_FORMAT_SIZE_T "d dimensions while image `i2' has %" PY_FORMAT_SIZE_T "d", i1->ndim, i2->ndim);
     return 0;
   }
 
   if (i1->ndim == 2) {
-    if (i1>shape[0] != i2->shape[0] || i2->shape[1] != i2->shape[1]) {
-    PyErr_Format(PyExc_RuntimeError, "shapes of the input images differ: (%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d) != (%" PY_FORMAT_SIZE_T ", %" PY_FORMAT_SIZE_T ")", i1->shape[0], i1->shape[1], i2->shape[0], i2->shape[1]);
+    if (i1->shape[0] != i2->shape[0] || i2->shape[1] != i2->shape[1]) {
+    PyErr_Format(PyExc_RuntimeError, "shapes of the input images differ: (%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d) != (%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d)", i1->shape[0], i1->shape[1], i2->shape[0], i2->shape[1]);
     return 0;
     }
   }
   else { //ndim == 3
     if (i1->shape[0] != i2->shape[0] || i2->shape[1] != i2->shape[1] ||
         i2->shape[2] != i2->shape[2]) {
-      PyErr_Format(PyExc_RuntimeError, "shapes of the input images differ: (%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d) != (%" PY_FORMAT_SIZE_T ", %" PY_FORMAT_SIZE_T ", %" PY_FORMAT_SIZE_T "d)", i1->shape[0], i1->shape[1], i1->shape[2], i2->shape[0], i2->shape[1], i2->shape[2]);
+      PyErr_Format(PyExc_RuntimeError, "shapes of the input images differ: (%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d) != (%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d)", i1->shape[0], i1->shape[1], i1->shape[2], i2->shape[0], i2->shape[1], i2->shape[2]);
       return 0;
     }
   }

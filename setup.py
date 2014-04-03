@@ -10,9 +10,6 @@ from setuptools import setup, find_packages, dist
 dist.Distribution(dict(setup_requires=['xbob.blitz']))
 from xbob.blitz.extension import Extension
 
-include_dirs = [xbob.io.get_include()]
-
-packages = []
 version = '1.2.0a0'
 
 setup(
@@ -48,18 +45,12 @@ setup(
         ],
       },
 
-    cmdclass = {
-      'build_ext': build_ext,
-      },
-
     ext_modules = [
       Extension("xbob.ip.optflow.liu.version",
         [
           "xbob/ip/optflow/liu/version.cpp",
           ],
         version = version,
-        packages = packages,
-        include_dirs = include_dirs,
         ),
       Extension("xbob.ip.optflow.liu._sor_based",
         [
@@ -68,9 +59,7 @@ setup(
           "xbob/ip/optflow/liu/sor_based/Stochastic.cpp",
           "xbob/ip/optflow/liu/sor_based/main.cpp",
           ],
-        packages = packages,
         version = version,
-        include_dirs = include_dirs,
         ),
       Extension("xbob.ip.optflow.liu._cg_based",
         [
@@ -78,9 +67,7 @@ setup(
           "xbob/ip/optflow/liu/cg_based/GaussianPyramid.cpp",
           "xbob/ip/optflow/liu/cg_based/main.cpp",
           ],
-        packages = packages,
         version = version,
-        include_dirs = include_dirs,
         ),
       ],
 

@@ -7,7 +7,6 @@
 """
 
 import os
-import unittest
 import numpy
 import nose.tools
 import pkg_resources
@@ -53,25 +52,24 @@ def run_for(sample, refdir):
   assert numpy.allclose(uv[0,:,:], u)
   assert numpy.allclose(uv[1,:,:], v)
 
-def test01_car_gray_SOR():
+def test_car_gray_SOR():
   run_for('gray/car', 'reference/sor_based')
 
-def test02_table_gray_SOR():
+def test_table_gray_SOR():
   run_for('gray/table', 'reference/sor_based')
 
-def test03_table_gray_CG():
+def test_table_gray_CG():
   run_for('gray/table', 'reference/cg_based')
 
-def test04_simple_gray_SOR():
+def test_simple_gray_SOR():
   run_for('gray/simple', 'reference/sor_based')
 
-def test05_complex_gray_SOR():
+def test_complex_gray_SOR():
   run_for('gray/complex', 'reference/sor_based')
 
 # Note: color + SOR not working for the time being. Ce Liu notified -
 # 13.11.2012
-
-def test06_car_color_CG():
+def test_car_color_CG():
   run_for('color/car', 'reference/cg_based')
 
 def external_run(sample, refdir):
@@ -124,21 +122,22 @@ def external_run(sample, refdir):
   finally:
     if os.path.exists(out): os.unlink(out)
 
-def test07_car_gray_sor_script():
+def test_car_gray_sor_script():
   external_run('gray/complex', 'reference/sor_based')
 
 # Note: color + SOR not working for the time being. Ce Liu notified -
 # 13.11.2012
-def xtest08_table_color_sor_script():
+@nose.tools.nottest
+def test_table_color_sor_script():
   external_run('gray/table', 'reference/sor_based')
 
-def test09_simple_gray_cg_script():
+def test_simple_gray_cg_script():
   external_run('gray/simple', 'reference/cg_based')
 
-def test10_rubberwhale_color_cg_script():
+def test_rubberwhale_color_cg_script():
   external_run('color/rubberwhale', 'reference/cg_based')
 
-def test11_video_script():
+def test_video_script():
   from .script import flow
   import tempfile
   N = 3

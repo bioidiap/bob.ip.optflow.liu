@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 # Andre Anjos <andre.anjos@idiap.ch>
-# Fri 21 Sep 2012 10:43:12 CEST 
+# Fri 21 Sep 2012 10:43:12 CEST
 
 """Estimates the optical flow between images or in a video
 
@@ -31,7 +31,7 @@ Bob, as the core framework for this port:
 
 __epilog__ = """examples:
 
-1. Estimate the OF in a video using the Successive Over-Relaxation (SOR) 
+1. Estimate the OF in a video using the Successive Over-Relaxation (SOR)
    variant:
 
   $ %(prog)s sor myvideo.avi myflow.hdf5
@@ -52,7 +52,7 @@ import bob
 import argparse
 
 class AliasedSubParsersAction(argparse._SubParsersAction):
-  """Hack taken from https://gist.github.com/471779 to allow aliases in 
+  """Hack taken from https://gist.github.com/471779 to allow aliases in
   argparse for python 2.x (this has been implemented on python 3.2)
   """
 
@@ -62,7 +62,7 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
       if aliases:
         dest += ' (%s)' % ','.join(aliases)
       sup = super(AliasedSubParsersAction._AliasedPseudoAction, self)
-      sup.__init__(option_strings=[], dest=dest, help=help) 
+      sup.__init__(option_strings=[], dest=dest, help=help)
 
   def add_parser(self, name, **kwargs):
     if 'aliases' in kwargs:
@@ -85,7 +85,7 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
 
     return parser
 
-def add_options(parser, alpha, ratio, min_width, outer, inner, iterations, 
+def add_options(parser, alpha, ratio, min_width, outer, inner, iterations,
     method, variant):
 
   if variant.lower() == 'cg':
@@ -97,7 +97,7 @@ def add_options(parser, alpha, ratio, min_width, outer, inner, iterations,
 
   parser.add_argument('-r', '--ratio', dest='ratio', default=ratio, type=float, metavar='FLOAT', help="Downsample ratio (defaults to %(default)s)")
 
-  parser.add_argument('-m', '--min-width', dest='min_width', 
+  parser.add_argument('-m', '--min-width', dest='min_width',
       default=min_width, type=int, metavar='N', help="Width of the coarsest level (defaults to %(default)s)")
 
   parser.add_argument('-o', '--outer-fp-iterations', metavar='N', dest='outer', default=outer, type=int, help="The number of outer fixed-point iterations (defaults to %(default)s)")
@@ -127,7 +127,7 @@ def main(user_input=None):
   parser.add_argument('-v', '--verbose', default=False, action='store_true',
       help="Increases the output verbosity level")
 
-  from ..version import __version__
+  from ..version import module as __version__
   name = os.path.basename(os.path.splitext(sys.argv[0])[0])
   parser.add_argument('-V', '--version', action='version',
       version='Optical Flow Estimation Tool v%s (%s)' % (__version__, name))
@@ -142,7 +142,7 @@ def main(user_input=None):
       help='Executes the "newer" variant using Successive Over-Relaxation (SOR) instead of Conjugate Gradient (CG).')
   add_options(sor_based, 1.0, 0.5, 40, 4, 1, 20, sor_flow, 'SOR')
 
-  cg_based = variants_parser.add_parser('cg', aliases=['old'], 
+  cg_based = variants_parser.add_parser('cg', aliases=['old'],
       help='Executes the "older" variant using Conjugate Gradient (CG). This was the only available implementation until 11.08.2011 on Ce Liu\'s website.')
   add_options(cg_based, 0.02, 0.75, 30, 20, 1, 50, cg_flow, 'CG')
 
@@ -199,13 +199,13 @@ def main(user_input=None):
     sys.stdout.flush()
 
   if args.gray and len(input[0].shape) != 2:
-    
+
     if args.verbose:
       sys.stdout.write('Converting %d frames to grayscale...' % len(input))
       sys.stdout.flush()
-   
+
     input = [bob.ip.rgb_to_gray(k) for k in input]
-  
+
     if args.verbose:
       sys.stdout.write('Ok\n')
       sys.stdout.flush()
@@ -228,7 +228,7 @@ def main(user_input=None):
   if args.verbose:
     sys.stdout.write('Saving flows to %s\n' % args.output)
     sys.stdout.flush()
-  
+
   out = bob.io.HDF5File(args.output, 'w')
   out.set('uv', flows)
   out.set_attribute('method', args.variant, 'uv')

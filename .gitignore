@@ -18,3 +18,4 @@ reference/
 *.mex*
 src/
 xbob.extension*.egg
+.gdb_history
