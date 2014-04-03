@@ -72,7 +72,7 @@ end
 
 % Set optical flow parameters (see Coarse2FineTwoFrames.m for the definition of
 % the parameters)
-alpha = 0.02 ;          
+alpha = 0.02 ;
 ratio = 0.75 ;
 minWidth = 30 ;
 nOuterFPIterations = 20 ;

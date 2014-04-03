@@ -4,7 +4,7 @@ function flowimage(indir, sample, outdir)
 %
 % Runs the optical flow estimator machinery on the input files and output the
 % results in the HDF5 file named by output.
-% 
+%
 % Andre Anjos <andre.anjos@idiap.ch>
 % Fri 09 Nov 2012 13:11:38 CET
 
