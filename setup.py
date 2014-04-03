@@ -52,7 +52,7 @@ setup(
           ],
         version = version,
         ),
-      Extension("xbob.ip.optflow.liu._sor_based",
+      Extension("xbob.ip.optflow.liu.sor",
         [
           "xbob/ip/optflow/liu/sor_based/OpticalFlow.cpp",
           "xbob/ip/optflow/liu/sor_based/GaussianPyramid.cpp",
@@ -61,7 +61,7 @@ setup(
           ],
         version = version,
         ),
-      Extension("xbob.ip.optflow.liu._cg_based",
+      Extension("xbob.ip.optflow.liu.cg",
         [
           "xbob/ip/optflow/liu/cg_based/OpticalFlow.cpp",
           "xbob/ip/optflow/liu/cg_based/GaussianPyramid.cpp",

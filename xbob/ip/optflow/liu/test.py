@@ -13,7 +13,7 @@ import pkg_resources
 
 import xbob.io
 
-from . import sor_flow, cg_flow
+from . import cg, sor
 
 def F(name, f):
   """Returns the test file on the "data" subdirectory"""
@@ -24,7 +24,7 @@ INPUT_VIDEO = F('xbob.io', 'test.mov')
 def run_for(sample, refdir):
 
   f = xbob.io.HDF5File(os.path.join(refdir, '%s.hdf5' % sample))
-  method = sor_flow if f.get_attribute('method', 'uv') == 'SOR' else cg_flow
+  method = sor.flow if f.get_attribute('method', 'uv') == 'SOR' else cg.flow
 
   # the reference flow field to use
   uv = f.read('uv')
@@ -52,6 +52,7 @@ def run_for(sample, refdir):
   assert numpy.allclose(uv[0,:,:], u)
   assert numpy.allclose(uv[1,:,:], v)
 
+@nose.tools.nottest
 def test_car_gray_SOR():
   run_for('gray/car', 'reference/sor_based')
 
@@ -61,9 +62,11 @@ def test_table_gray_SOR():
 def test_table_gray_CG():
   run_for('gray/table', 'reference/cg_based')
 
+@nose.tools.nottest
 def test_simple_gray_SOR():
   run_for('gray/simple', 'reference/sor_based')
 
+@nose.tools.nottest
 def test_complex_gray_SOR():
   run_for('gray/complex', 'reference/sor_based')
 
@@ -131,12 +134,15 @@ def test_car_gray_sor_script():
 def test_table_color_sor_script():
   external_run('gray/table', 'reference/sor_based')
 
+@nose.tools.nottest
 def test_simple_gray_cg_script():
   external_run('gray/simple', 'reference/cg_based')
 
+@nose.tools.nottest
 def test_rubberwhale_color_cg_script():
   external_run('color/rubberwhale', 'reference/cg_based')
 
+@nose.tools.nottest
 def test_video_script():
   from .script import flow
   import tempfile
