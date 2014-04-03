@@ -1,8 +1,9 @@
 /**
  * @author Andre Anjos <andre.anjos@idiap.ch>
- * @date Thu 08 Nov 2012 12:09:32 CET
+ * @date Thu  3 Apr 09:02:51 2014 CEST
  *
- * @brief Boost.Python extension to Ce Liu's Optical Flow dense estimator
+ * @brief Bob/Python extension to Ce Liu's Optical Flow dense estimator using
+ * Conjugate-Gradient for minimization (old version).
  */
 
 #ifdef NO_IMPORT_ARRAY
@@ -247,7 +248,7 @@ static PyMethodDef module_methods[] = {
     {0}  /* Sentinel */
 };
 
-PyDoc_STRVAR(module_docstr, "Ce Liu's Optical Flow implementations");
+PyDoc_STRVAR(module_docstr, "Ce Liu's Optical Flow implementations using CG");
 
 #if PY_VERSION_HEX >= 0x03000000
 static PyModuleDef module_definition = {
