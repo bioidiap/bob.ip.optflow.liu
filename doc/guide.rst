@@ -126,3 +126,8 @@ You will find more examples on this directory and on the
   The example images are coded in PNG format so that they don't suffer from
   compression/decompression problems and can be read the same way in any
   platform or implementation.
+
+.. include:: links.rst
+
+.. Place your references here:
+
