@@ -12,6 +12,7 @@
 .. _blitz++: http://www.oonumerics.org/blitz
 .. _bob's idiap guide: http://github.com/idiap/bob/wiki/Using-Bob-at-Idiap
 .. _bob's website: https://www.idiap.ch/software/bob
+.. _bob: https://www.idiap.ch/software/bob
 .. _boost: http://www.boost.org
 .. _buildbot: http://trac.buildbot.net
 .. _buildout: http://pypi.python.org/pypi/zc.buildout/

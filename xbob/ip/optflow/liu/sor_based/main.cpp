@@ -112,9 +112,8 @@ give the exact same output as the Matlab equivalent.\n\
 \n\
 .. note::\n\
 \n\
-   This variant does not use the Successive Over-Relaxation\n\
-   (SOR) that was implemented on August 1st., 2011 by C. Liu,\n\
-   but the old version based on Conjugate-Gradient (CG).\n\
+   This variant **uses** the Successive Over-Relaxation\n\
+   (SOR) that was implemented on August 1st., 2011 by C. Liu.\n\
 \n\
 Parameters:\n\
 \n\

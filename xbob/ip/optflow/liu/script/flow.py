@@ -117,7 +117,7 @@ def add_options(parser, alpha, ratio, min_width, outer, inner, iterations,
 
 def main(user_input=None):
 
-  from .. import sor_flow, cg_flow
+  from .. import cg, sor
 
   parser = argparse.ArgumentParser(description=__doc__, epilog=__epilog__,
       formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -140,11 +140,11 @@ def main(user_input=None):
 
   sor_based = variants_parser.add_parser('sor', aliases=['new'],
       help='Executes the "newer" variant using Successive Over-Relaxation (SOR) instead of Conjugate Gradient (CG).')
-  add_options(sor_based, 1.0, 0.5, 40, 4, 1, 20, sor_flow, 'SOR')
+  add_options(sor_based, 1.0, 0.5, 40, 4, 1, 20, sor.flow, 'SOR')
 
   cg_based = variants_parser.add_parser('cg', aliases=['old'],
       help='Executes the "older" variant using Conjugate Gradient (CG). This was the only available implementation until 11.08.2011 on Ce Liu\'s website.')
-  add_options(cg_based, 0.02, 0.75, 30, 20, 1, 50, cg_flow, 'CG')
+  add_options(cg_based, 0.02, 0.75, 30, 20, 1, 50, cg.flow, 'CG')
 
   args = parser.parse_args(args=user_input)
 

@@ -9,6 +9,18 @@
 This section includes information for using the pure Python API of
 ``xbob.ip.optflow.liu``.
 
+Root module functions
+---------------------
 
 .. automodule:: xbob.ip.optflow.liu
+
+Conjugate-Gradient (CG) based Implementation
+--------------------------------------------
+
+.. automodule:: xbob.ip.optflow.liu.cg
+
+Successive-Over-Relaxation (SOR) based Implementation
+-----------------------------------------------------
+
+.. automodule:: xbob.ip.optflow.liu.sor
 

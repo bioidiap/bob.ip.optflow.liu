@@ -8,7 +8,17 @@
  User's Guide
 ==============
 
-Pretty simple, just do something like:
+There are two versions of the Optical Flow framework implemented on this
+package. A older version, based on Conjugate-Gradient (CG) for minization and a
+newer version, based on Successive-Over-Relaxation (SOR). Both versions accept
+input images in either gray-scale (2D arrays with shape ``(height, width)``) or
+colored (3D arrays with shape ``(3, height, width)``). The data type of the
+arrays can be any, but if different than ``float64``, an internal casting will
+take place. Similarly, RGB images will be gray-scaled before usage. For
+efficience, it is recommended only 2D arrays with 64-bit floats are passed as
+input.
+
+To use the CG-based implementation, do this::
 
 .. code-block:: python
 
@@ -17,9 +27,9 @@ Pretty simple, just do something like:
    ...
    (u, v, warped) = flow(image1, image2)
 
-The ``cg_flow`` method accepts more parameters. Please refer to its built-in
-documentation for details. Optionally, you can also use the new SOR-based
-implementation from Liu's homepage. To do so, do the following instead:
+The ``flow`` method accepts more parameters. Please refer to the reference
+guide for details. Optionally, you can also use the new SOR-based
+implementation included in the package. To do so, do the following instead:
 
 .. code-block:: python
 
@@ -27,6 +37,11 @@ implementation from Liu's homepage. To do so, do the following instead:
    from xbob.ip.optflow.liu.sor import flow
    ...
    (u, v, warped) = flow(image1, image2)
+
+.. warning::
+
+   If you'd like to feed colored images into ``flow``, make sure to read and
+   understand our Reproducible Research Notes below.
 
 Reproducible Research Notes
 ---------------------------
@@ -67,19 +82,20 @@ Flow framework using Successive Over-Relaxation (SOR) instead of Conjugate
 Gradient (CG) for minization. The new framework is presumably faster, but
 does not give similar results compared to the old CG-based one.
 
-If you would like to give it a spin, use the method ``sor_flow`` instead of
-``cg_flow`` as shown above. Notice that the defaults for both implementations
+If you would like to give it a spin, use the method ``sor.flow`` instead of
+``cg.flow`` as shown above. Notice that the defaults for both implementations
 are different, following the defaults pre-set in the Matlab MEX code in the
 different releases.
 
-Particularly, avoid feeding colored images to ``sor_flow``. While that works
-OK with ``cg_flow``, ``sor_flow`` gives inconsistent results everytime it is
-run. I recommend gray-scaling images before using ``sor_flow``. With that,
-results are at least consistent between runs. I'm not sure about their
-correctness. Ce Liu has been informed and should be working on it soon
+Particularly, avoid feeding colored images to
+:py:func:`xbob.ip.optflow.liu.sor.flow`. While that works OK with
+:py:func:`xbob.ip.opflow.liu.cg.flow`, ``sor.flow`` gives inconsistent results
+everytime it is run. I recommend gray-scaling images before using ``sor.flow``.
+With that, results are at least consistent between runs. I'm not sure about
+their correctness. Ce Liu has been informed and should be working on it soon
 enough (today is 14.Nov.2012).
 
-To access this implementation, use ``xbob.optflow.liu.sor_flow``.
+To access this implementation, use :py:func:`xbob.ip.optflow.liu.sor.flow`.
 
 Access to the MATLAB code
 =========================
@@ -105,15 +121,15 @@ Here is an example of usage for the Matlab function ``flowimage``::
 
   $ matlab
   ...
-  >> flowimage ../../xbob/optflow/liu/data/gray table .
+  >> flowimage ../../xbob/ip/optflow/liu/data/gray table .
 
 This will generate a file called ``table.hdf5`` that contains the flow
 calculated for the ``table`` example, i.e. between images ``table1.png`` and
 ``table2.png``. The input images are pre-gray-scaled and are taken from
-the directory ``../../xbob/optflow/liu/data/gray``, following your command.
+the directory ``../../xbob/ip/optflow/liu/data/gray``, following your command.
 
 You will find more examples on this directory and on the
-``../../xbob/optflow/liu/data/gray`` directory.
+``../../xbob/ip/optflow/liu/data/gray`` directory.
 
 .. note::
 
