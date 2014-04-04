@@ -581,7 +581,7 @@ namespace sor {
 
       if(nElements!=other.nElements)
       {
-        nElements=other.nElements;		
+        nElements=other.nElements;
         if(pData!=NULL)
           delete []pData;
         pData=NULL;
@@ -931,7 +931,7 @@ namespace sor {
     }
 
   //------------------------------------------------------------------------------------------
-  // function to compute the second order derivative 
+  // function to compute the second order derivative
   //------------------------------------------------------------------------------------------
   template <class T>
     template <class T1>
@@ -1071,7 +1071,7 @@ namespace sor {
   // function to do Gaussian smoothing
   //------------------------------------------------------------------------------------------
   template <class T>
-    void Image<T>::GaussianSmoothing(double sigma,int fsize) 
+    void Image<T>::GaussianSmoothing(double sigma,int fsize)
     {
       Image<T> foo;
       GaussianSmoothing(foo,sigma,fsize);
@@ -1082,7 +1082,7 @@ namespace sor {
 
   template <class T>
     template <class T1>
-    void Image<T>::GaussianSmoothing(Image<T1>& image,double sigma,int fsize) const 
+    void Image<T>::GaussianSmoothing(Image<T1>& image,double sigma,int fsize) const
     {
       Image<T1> foo;
       // constructing the 1D gaussian filter
@@ -1109,7 +1109,7 @@ namespace sor {
   //------------------------------------------------------------------------------------------
   template <class T>
     template <class T1>
-    void Image<T>::GaussianSmoothing_transpose(Image<T1>& image,double sigma,int fsize) const 
+    void Image<T>::GaussianSmoothing_transpose(Image<T1>& image,double sigma,int fsize) const
     {
       Image<T1> foo;
       // constructing the 1D gaussian filter
@@ -1140,7 +1140,7 @@ namespace sor {
     template <class T1>
     void Image<T>::smoothing(Image<T1>& image,double factor)
     {
-      // build 
+      // build
       double filter2D[9]={1,0,1,0, 0, 0,1, 0,1};
       filter2D[1]=filter2D[3]=filter2D[5]=filter2D[7]=factor;
       filter2D[4]=factor*factor;
@@ -1698,7 +1698,7 @@ namespace sor {
       const T1*& pData1=image1.data();
       const T2*& pData2=image2.data();
       for(int i=0;i<nElements;i++)
-        pData[i]=pData1[i]+pData2[i];	
+        pData[i]=pData1[i]+pData2[i];
     }
 
   template <class T>
@@ -1716,7 +1716,7 @@ namespace sor {
       const T1*& pData1=image1.data();
       const T2*& pData2=image2.data();
       for(int i=0;i<nElements;i++)
-        pData[i]=pData1[i]+pData2[i]*ratio;	
+        pData[i]=pData1[i]+pData2[i]*ratio;
     }
 
   template <class T>
@@ -1730,7 +1730,7 @@ namespace sor {
       }
       const T1*& pData1=image1.data();
       for(int i=0;i<nElements;i++)
-        pData[i]+=pData1[i]*ratio;	
+        pData[i]+=pData1[i]*ratio;
     }
 
   template <class T>
@@ -1744,7 +1744,7 @@ namespace sor {
       }
       const T1*& pData1=image1.data();
       for(int i=0;i<nElements;i++)
-        pData[i]+=pData1[i];	
+        pData[i]+=pData1[i];
     }
 
   template <class T>
@@ -2123,7 +2123,7 @@ namespace sor {
               weight *= dTop;
             if(i==Bottom)
               weight *= dBottom;
-          }			
+          }
 
           if(Left==Right)
             weight *= (dLeft+dRight-1);
@@ -2213,7 +2213,7 @@ namespace sor {
 
             // now use the coefficients for interpolation
             output.pData[offset*nChannels+k] = a[0][0] +          a[0][1]*dy +          a[0][2]*dy2 +           a[0][3]*dy3+
-              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 + 
+              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 +
               a[2][0]*dx2 + a[2][1]*dx2*dy + a[2][2]*dx2*dy2 + a[2][3]*dx2*dy3+
               a[3][0]*dx3 + a[3][1]*dx3*dy + a[3][2]*dx3*dy2 + a[3][3]*dx3*dy3;
             //output.pData[offset*nChannels+k] = __max(__min(output.pData[offset*nChannels+k],ImgMax),0);
@@ -2275,7 +2275,7 @@ namespace sor {
 
             // now use the coefficients for interpolation
             output.pData[offset*nChannels+k] = a[0][0] +          a[0][1]*dy +          a[0][2]*dy2 +           a[0][3]*dy3+
-              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 + 
+              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 +
               a[2][0]*dx2 + a[2][1]*dx2*dy + a[2][2]*dx2*dy2 + a[2][3]*dx2*dy3+
               a[3][0]*dx3 + a[3][1]*dx3*dy + a[3][2]*dx3*dy2 + a[3][3]*dx3*dy3;
             //output.pData[offset*nChannels+k] = __max(__min(output.pData[offset*nChannels+k],ImgMax),0);
@@ -2425,11 +2425,13 @@ namespace sor {
       double a[4][4];
       int offsets[2][2];
 
+      /**
       T ImgMax;
       if(IsFloat())
         ImgMax = 1;
       else
         ImgMax = 255;
+      **/
 
       for(int i  = 0; i<height; i++)
         for(int j = 0;j<width;j++)
@@ -2472,7 +2474,7 @@ namespace sor {
 
             // now use the coefficients for interpolation
             output.pData[offset*nChannels+k] = a[0][0] +          a[0][1]*dy +          a[0][2]*dy2 +           a[0][3]*dy3+
-              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 + 
+              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 +
               a[2][0]*dx2 + a[2][1]*dx2*dy + a[2][2]*dx2*dy2 + a[2][3]*dx2*dy3+
               a[3][0]*dx3 + a[3][1]*dx3*dy + a[3][2]*dx3*dy2 + a[3][3]*dx3*dy3;
             //output.pData[offset*nChannels+k] = __max(__min(output.pData[offset*nChannels+k],ImgMax),0);
@@ -2540,7 +2542,7 @@ namespace sor {
 
             // now use the coefficients for interpolation
             output.pData[offset*nChannels+k] = a[0][0] +          a[0][1]*dy +          a[0][2]*dy2 +           a[0][3]*dy3+
-              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 + 
+              a[1][0]*dx +   a[1][1]*dx*dy   + a[1][2]*dx*dy2   + a[1][3]*dx*dy3 +
               a[2][0]*dx2 + a[2][1]*dx2*dy + a[2][2]*dx2*dy2 + a[2][3]*dx2*dy3+
               a[3][0]*dx3 + a[3][1]*dx3*dy + a[3][2]*dx3*dy2 + a[3][3]*dx3*dy3;
             //output.pData[offset*nChannels+k] = __max(__min(output.pData[offset*nChannels+k],ImgMax),0);
