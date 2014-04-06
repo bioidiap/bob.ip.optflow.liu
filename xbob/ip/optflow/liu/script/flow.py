@@ -50,6 +50,7 @@ import os
 import sys
 import argparse
 import xbob.io
+import xbob.ip.color
 
 class AliasedSubParsersAction(argparse._SubParsersAction):
   """Hack taken from https://gist.github.com/471779 to allow aliases in
@@ -204,7 +205,7 @@ def main(user_input=None):
       sys.stdout.write('Converting %d frames to grayscale...' % len(input))
       sys.stdout.flush()
 
-    input = [xbob.ip.rgb_to_gray(k) for k in input]
+    input = [xbob.ip.color.rgb_to_gray(k) for k in input]
 
     if args.verbose:
       sys.stdout.write('Ok\n')

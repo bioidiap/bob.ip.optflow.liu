@@ -37,6 +37,7 @@ setup(
       'setuptools',
       'xbob.blitz',
       'xbob.io',
+      'xbob.ip.color',
     ],
 
     entry_points = {
