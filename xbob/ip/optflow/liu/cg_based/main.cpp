@@ -57,9 +57,11 @@ static PyObject* coarse2fine_flow (
   cg::DImage dwarped_i2;
 
   //Calls Optical Flow estimation
+  Py_BEGIN_ALLOW_THREADS
   cg::OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
       alpha, ratio, minWidth, nOuterFPIterations, nInnerFPIterations,
       nCGIterations);
+  Py_END_ALLOW_THREADS
 
   if (i1->ndim == 2) {
     //Resets input images so we don't get a delete on those
