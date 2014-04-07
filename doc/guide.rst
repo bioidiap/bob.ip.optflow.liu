@@ -46,8 +46,34 @@ implementation included in the package. To do so, do the following instead:
 Reproducible Research Notes
 ---------------------------
 
-Some notes on being able to reproduce consistent results through the different
-platforms supported by `Bob`_.
+In order to be able to test (and attest) the correct functioning of this port,
+a set of unit tests were implemented. These tests are based on image pairs
+available on Liu's website (car, table, etc.). For each pair and explored
+conditions, a Matlab reference for the computed flow was produced and recorded
+into HDF5 files. The files are used to compare the results of the flow
+calculated by these bindings, using the same input parameters and image pairs.
+
+This section contains notes for tests executed in different architectures or
+using different options and implementations.
+
+.. note::
+
+   The Matlab references were produced in a 64-bit machine running Linux.
+
+Architecture Imprecisions
+=========================
+
+While running the unit tests, I can verify that our (64-bit) references check
+against values produced by these bindings on 64-bit architectures, under Linux
+or Mac OSX. In the case this package is compiled and ran on a 32-bit system,
+the results are not as accurate, because of the reduced precision. The 64-bit
+reference values for a set of image pairs can be matched, on a such a system,
+only with about :math:`0.1` absolute precision.
+
+Tests against a 64-bit build of these bindings do not show any significative
+differences to an absolute accuracy of :math:`10^{-08}` and a relative accuracy
+of :math:`10^{-5}`. Because of effect, we recommend you use a 64-bit machine
+for estimating your flows.
 
 Differences between Matlab and Bob/Python ports
 ===============================================
