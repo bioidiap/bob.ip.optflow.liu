@@ -8,6 +8,8 @@
  Python Bindings to Liu's Optical Flow Framework
 =================================================
 
+.. todolist::
+
 This package is a simple Python wrapper to the open-source Optical Flow
 estimator developed by C. Liu during his Ph.D. The code was originally
 conceived to operate over Matlab. This is a Python/`Bob`_ port. If you use this
