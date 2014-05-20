@@ -11,7 +11,9 @@ import numpy
 import nose.tools
 import pkg_resources
 
-import xbob.io
+import xbob.io.base
+import xbob.io.image
+import xbob.io.video
 
 from . import cg, sor
 
@@ -19,7 +21,7 @@ def F(name, f):
   """Returns the test file on the "data" subdirectory"""
   return pkg_resources.resource_filename(name, os.path.join('data', f))
 
-INPUT_VIDEO = F('xbob.io', 'test.mov')
+INPUT_VIDEO = F('xbob.io.video', 'test.mov')
 
 def run_for(sample, method):
 
@@ -27,7 +29,7 @@ def run_for(sample, method):
   refdir.insert(1, method)
   refdir = os.sep.join(refdir)
 
-  f = xbob.io.HDF5File(F(__name__, refdir + '.hdf5'))
+  f = xbob.io.base.HDF5File(F(__name__, refdir + '.hdf5'))
   method = sor.flow if method == 'sor' else cg.flow
 
   # the reference flow field to use
@@ -47,8 +49,8 @@ def run_for(sample, method):
   else:
     n_iterations = int(f.get_attribute('n_iterations', 'uv'))
 
-  i1 = xbob.io.load(F(__name__, '%s1.png' % sample)).astype('float64')/255.
-  i2 = xbob.io.load(F(__name__, '%s2.png' % sample)).astype('float64')/255.
+  i1 = xbob.io.base.load(F(__name__, '%s1.png' % sample)).astype('float64')/255.
+  i2 = xbob.io.base.load(F(__name__, '%s2.png' % sample)).astype('float64')/255.
 
   (u, v, wi2) = method(i1, i2, alpha, ratio, min_width,
       n_outer_fp_iterations, n_inner_fp_iterations, n_iterations)
@@ -100,7 +102,7 @@ def external_run(sample, method):
     refdir.insert(1, method)
     refdir = os.sep.join(refdir)
 
-    f = xbob.io.HDF5File(F(__name__, refdir + '.hdf5'))
+    f = xbob.io.base.HDF5File(F(__name__, refdir + '.hdf5'))
 
     # the values of parameters used for this flow field estimation
     alpha = f.get_attribute('alpha', 'uv')
@@ -133,7 +135,7 @@ def external_run(sample, method):
 
     #load and check
     uvref = f.read('uv')
-    uv = xbob.io.load(out)
+    uv = xbob.io.base.load(out)
     if __import__('platform').architecture()[0] == '32bit':
       #not as precise
       assert numpy.allclose(uvref, uv, atol=1e-1)
@@ -178,7 +180,7 @@ def test_video_script():
     nose.tools.eq_(flow.main(args), 0)
 
     #load and check
-    uv = xbob.io.load(out)
+    uv = xbob.io.base.load(out)
     nose.tools.eq_( len(uv), N-1 )
 
   finally:

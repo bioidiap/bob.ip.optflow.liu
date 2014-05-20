@@ -36,7 +36,9 @@ setup(
     install_requires=[
       'setuptools',
       'xbob.blitz',
-      'xbob.io',
+      'xbob.io.base',
+      'xbob.io.image',
+      'xbob.io.video',
       'xbob.ip.color',
     ],
 
