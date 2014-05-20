@@ -49,7 +49,9 @@ __epilog__ = """examples:
 import os
 import sys
 import argparse
-import xbob.io
+import xbob.io.base
+import xbob.io.image
+import xbob.io.video
 import xbob.ip.color
 
 class AliasedSubParsersAction(argparse._SubParsersAction):
@@ -175,7 +177,7 @@ def main(user_input=None):
         sys.stdout.write('Ok\n')
         sys.stdout.flush()
 
-      input = xbob.io.VideoReader(args.input[0])[:args.frames]
+      input = xbob.io.video.reader(args.input[0])[:args.frames]
 
     else:
 
@@ -183,11 +185,11 @@ def main(user_input=None):
         sys.stdout.write('Loading all frames from %s...' % args.input[0])
         sys.stdout.flush()
 
-      input = xbob.io.load(args.input[0])
+      input = xbob.io.base.load(args.input[0])
 
   else: #assume the user passed a sequence of images
 
-    input = [xbob.io.load(k) for k in args.input]
+    input = [xbob.io.base.load(k) for k in args.input]
 
   if args.verbose:
     sys.stdout.write('Converting %d frames to double...' % len(input))
@@ -230,7 +232,7 @@ def main(user_input=None):
     sys.stdout.write('Saving flows to %s\n' % args.output)
     sys.stdout.flush()
 
-  out = xbob.io.HDF5File(args.output, 'w')
+  out = xbob.io.base.HDF5File(args.output, 'w')
   out.set('uv', flows)
   out.set_attribute('method', args.variant, 'uv')
   out.set_attribute('alpha', args.alpha, 'uv')
