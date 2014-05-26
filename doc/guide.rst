@@ -23,7 +23,7 @@ To use the CG-based implementation, do this::
 .. code-block:: python
 
    import bob
-   from xbob.ip.optflow.liu.cg import flow
+   from bob.ip.optflow.liu.cg import flow
    ...
    (u, v, warped) = flow(image1, image2)
 
@@ -34,7 +34,7 @@ implementation included in the package. To do so, do the following instead:
 .. code-block:: python
 
    import bob
-   from xbob.ip.optflow.liu.sor import flow
+   from bob.ip.optflow.liu.sor import flow
    ...
    (u, v, warped) = flow(image1, image2)
 
@@ -114,14 +114,14 @@ are different, following the defaults pre-set in the Matlab MEX code in the
 different releases.
 
 Particularly, avoid feeding colored images to
-:py:func:`xbob.ip.optflow.liu.sor.flow`. While that works OK with
-:py:func:`xbob.ip.opflow.liu.cg.flow`, ``sor.flow`` gives inconsistent results
+:py:func:`bob.ip.optflow.liu.sor.flow`. While that works OK with
+:py:func:`bob.ip.opflow.liu.cg.flow`, ``sor.flow`` gives inconsistent results
 everytime it is run. I recommend gray-scaling images before using ``sor.flow``.
 With that, results are at least consistent between runs. I'm not sure about
 their correctness. Ce Liu has been informed and should be working on it soon
 enough (today is 14.Nov.2012).
 
-To access this implementation, use :py:func:`xbob.ip.optflow.liu.sor.flow`.
+To access this implementation, use :py:func:`bob.ip.optflow.liu.sor.flow`.
 
 Access to the MATLAB code
 =========================
@@ -146,15 +146,15 @@ be used as test input for this package's test suite, or for inspection (use
 Here is an example of usage for the Matlab function ``flowimage``::
 
   $ matlab -nodisplay -nodesktop -nojvm
-  >> flowimage ../../xbob/ip/optflow/liu/data/gray table .
+  >> flowimage ../../bob/ip/optflow/liu/data/gray table .
 
 This will generate a file called ``table.hdf5`` that contains the flow
 calculated for the ``table`` example, i.e. between images ``table1.png`` and
 ``table2.png``. The input images are pre-gray-scaled and are taken from
-the directory ``../../xbob/ip/optflow/liu/data/gray``, following your command.
+the directory ``../../bob/ip/optflow/liu/data/gray``, following your command.
 
 You will find more examples on this directory and on the
-``../../xbob/ip/optflow/liu/data/gray`` directory.
+``../../bob/ip/optflow/liu/data/gray`` directory.
 
 .. note::
 

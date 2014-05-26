@@ -7,68 +7,68 @@
 """
 
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires=['xbob.blitz']))
-from xbob.blitz.extension import Extension
+dist.Distribution(dict(setup_requires=['bob.blitz']))
+from bob.blitz.extension import Extension
 
 version = '1.2.0a0'
 
 setup(
 
-    name="xbob.ip.optflow.liu",
+    name="bob.ip.optflow.liu",
     version=version,
     description="Python bindings to the optical flow framework by C. Liu",
     license="GPLv3",
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
     long_description=open('README.rst').read(),
-    url='https://github.com/bioidiap/xbob.ip.optflow.liu',
+    url='https://github.com/bioidiap/bob.ip.optflow.liu',
 
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
 
     namespace_packages=[
-      "xbob",
-      "xbob.ip",
-      "xbob.ip.optflow",
+      "bob",
+      "bob.ip",
+      "bob.ip.optflow",
       ],
 
     install_requires=[
       'setuptools',
-      'xbob.blitz',
-      'xbob.io.base',
-      'xbob.io.image',
-      'xbob.io.video',
-      'xbob.ip.color',
+      'bob.blitz',
+      'bob.io.base',
+      'bob.io.image',
+      'bob.io.video',
+      'bob.ip.color',
     ],
 
     entry_points = {
       'console_scripts': [
-        'xbob_of_liu.py = xbob.ip.optflow.liu.script.flow:main',
+        'bob_of_liu.py = bob.ip.optflow.liu.script.flow:main',
         ],
       },
 
     ext_modules = [
-      Extension("xbob.ip.optflow.liu.version",
+      Extension("bob.ip.optflow.liu.version",
         [
-          "xbob/ip/optflow/liu/version.cpp",
+          "bob/ip/optflow/liu/version.cpp",
           ],
         version = version,
         ),
-      Extension("xbob.ip.optflow.liu.sor",
+      Extension("bob.ip.optflow.liu.sor",
         [
-          "xbob/ip/optflow/liu/sor_based/OpticalFlow.cpp",
-          "xbob/ip/optflow/liu/sor_based/GaussianPyramid.cpp",
-          "xbob/ip/optflow/liu/sor_based/Stochastic.cpp",
-          "xbob/ip/optflow/liu/sor_based/main.cpp",
+          "bob/ip/optflow/liu/sor_based/OpticalFlow.cpp",
+          "bob/ip/optflow/liu/sor_based/GaussianPyramid.cpp",
+          "bob/ip/optflow/liu/sor_based/Stochastic.cpp",
+          "bob/ip/optflow/liu/sor_based/main.cpp",
           ],
         version = version,
         ),
-      Extension("xbob.ip.optflow.liu.cg",
+      Extension("bob.ip.optflow.liu.cg",
         [
-          "xbob/ip/optflow/liu/cg_based/OpticalFlow.cpp",
-          "xbob/ip/optflow/liu/cg_based/GaussianPyramid.cpp",
-          "xbob/ip/optflow/liu/cg_based/main.cpp",
+          "bob/ip/optflow/liu/cg_based/OpticalFlow.cpp",
+          "bob/ip/optflow/liu/cg_based/GaussianPyramid.cpp",
+          "bob/ip/optflow/liu/cg_based/main.cpp",
           ],
         version = version,
         ),

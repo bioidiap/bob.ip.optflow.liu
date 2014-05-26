@@ -28,8 +28,8 @@ install:
   - "python bootstrap.py"
   - "CFLAGS=-coverage ./bin/buildout"
 script:
-  - "./bin/python -c 'from xbob.ip.optflow.liu import get_config; print(get_config())'"
-  - "./bin/coverage run --source=xbob.ip.optflow.liu ./bin/nosetests -sv"
+  - "./bin/python -c 'from bob.ip.optflow.liu import get_config; print(get_config())'"
+  - "./bin/coverage run --source=bob.ip.optflow.liu ./bin/nosetests -sv"
   - "./bin/sphinx-build -b doctest doc sphinx"
   - "./bin/sphinx-build -b html doc sphinx"
 after_success:

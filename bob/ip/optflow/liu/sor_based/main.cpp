@@ -1,16 +1,16 @@
 /**
  * @author Andre Anjos <andre.anjos@idiap.ch>
- * @date Thu  3 Apr 09:02:51 2014 CEST
+ * @date Thu  3 Apr 09:03:42 2014 CEST
  *
  * @brief Bob/Python extension to Ce Liu's Optical Flow dense estimator using
- * Conjugate-Gradient for minimization (old version).
+ * Successive-Over-Relaxation for minimization (new version).
  */
 
 #ifdef NO_IMPORT_ARRAY
 #undef NO_IMPORT_ARRAY
 #endif
-#include <xbob.blitz/capi.h>
-#include <xbob.blitz/cleanup.h>
+#include <bob.blitz/capi.h>
+#include <bob.blitz/cleanup.h>
 
 #include "OpticalFlow.h"
 
@@ -18,7 +18,7 @@
  * Temporarily assigns the memory storage from the blitz array to the double
  * image type that is used by Liu's framework.
  */
-static void bz2dimage(PyBlitzArrayObject* bz, cg::DImage& di) {
+static void bz2dimage(PyBlitzArrayObject* bz, sor::DImage& di) {
   di.clear();
   if (bz->ndim == 2) {
     di.imWidth = bz->shape[1];
@@ -36,31 +36,31 @@ static void bz2dimage(PyBlitzArrayObject* bz, cg::DImage& di) {
 static PyObject* coarse2fine_flow (
     PyBlitzArrayObject* i1, //first input image
     PyBlitzArrayObject* i2, //second input image
-    double alpha=0.02,
-    double ratio=0.75,
-    int minWidth=30,
-    int nOuterFPIterations=20,
+    double alpha=1.0,
+    double ratio=0.5,
+    int minWidth=40,
+    int nOuterFPIterations=4,
     int nInnerFPIterations=1,
-    int nCGIterations=50
+    int nSORIterations=20
     ) {
 
-  cg::DImage di1;
-  cg::DImage di2;
+  sor::DImage di1;
+  sor::DImage di2;
 
   //Maps input images
   bz2dimage(i1, di1);
   bz2dimage(i2, di2);
 
   //Output arrays
-  cg::DImage du;
-  cg::DImage dv;
-  cg::DImage dwarped_i2;
+  sor::DImage du;
+  sor::DImage dv;
+  sor::DImage dwarped_i2;
 
   //Calls Optical Flow estimation
   Py_BEGIN_ALLOW_THREADS
-  cg::OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
+  sor::OpticalFlow::Coarse2FineFlow(du, dv, dwarped_i2, di1, di2,
       alpha, ratio, minWidth, nOuterFPIterations, nInnerFPIterations,
-      nCGIterations);
+      nSORIterations);
   Py_END_ALLOW_THREADS
 
   if (i1->ndim == 2) {
@@ -103,7 +103,7 @@ static PyObject* coarse2fine_flow (
 
 PyDoc_STRVAR(s_flow_str, "flow");
 PyDoc_STRVAR(s_flow_doc,
-"flow(i1, i2, [alpha=0.02, [ratio=0.75, [min_width=30, [n_outer_fp_iterations=20, [n_inner_fp_iterations=1, [n_cg_iterations=50]]]]]]) -> (u, v, w2)\n\
+"flow(i1, i2, [alpha=1.0, [ratio=0.5, [min_width=40, [n_outer_fp_iterations=4, [n_inner_fp_iterations=1, [n_sor_iterations=20]]]]]]) -> (u, v, w2)\n\
 \n\
 This method computes the dense optical flow field using a\n\
 coarse-to-fine approach. C++ code running under this call is\n\
@@ -114,9 +114,8 @@ give the exact same output as the Matlab equivalent.\n\
 \n\
 .. note::\n\
 \n\
-   This variant does not use the Successive Over-Relaxation\n\
-   (SOR) that was implemented on August 1st., 2011 by C. Liu,\n\
-   but the old version based on Conjugate-Gradient (CG).\n\
+   This variant **uses** the Successive Over-Relaxation\n\
+   (SOR) that was implemented on August 1st., 2011 by C. Liu.\n\
 \n\
 Parameters:\n\
 \n\
@@ -141,8 +140,9 @@ n_outer_fp_iterations\n\
 n_inner_fp_iterations\n\
   [optional] The number of inner fixed point iterations\n\
 \n\
-n_cg_iterations\n\
-  [optional] The number of conjugate-gradient (CG) iterations\n\
+n_sor_iterations\n\
+  [optional] The number of successive-over-relaxation\n\
+  (SOR) iterations\n\
 \n\
 Returns a tuple containing three 2D double arrays with the same\n\
 dimensions as the input images:\n\
@@ -169,19 +169,19 @@ PyObject* flow(PyObject*, PyObject* args, PyObject* kwds) {
     "min_width",
     "n_outer_fp_iterations",
     "n_inner_fp_iterations",
-    "n_cg_iterations",
+    "n_sor_iterations",
     0
   };
   static char** kwlist = const_cast<char**>(const_kwlist);
 
   PyBlitzArrayObject* i1 = 0;
   PyBlitzArrayObject* i2 = 0;
-  double alpha = 0.02;
-  double ratio = 0.75;
-  Py_ssize_t min_width = 30;
-  Py_ssize_t n_outer_fp_iterations = 20;
+  double alpha = 1.0;
+  double ratio = 0.5;
+  Py_ssize_t min_width = 40;
+  Py_ssize_t n_outer_fp_iterations = 4;
   Py_ssize_t n_inner_fp_iterations = 1;
-  Py_ssize_t n_cg_iterations = 50;
+  Py_ssize_t n_cg_iterations = 20;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&O&|ddnnnn", kwlist,
         &PyBlitzArray_Converter, &i1,
@@ -251,12 +251,12 @@ static PyMethodDef module_methods[] = {
     {0}  /* Sentinel */
 };
 
-PyDoc_STRVAR(module_docstr, "Ce Liu's Optical Flow implementations using CG");
+PyDoc_STRVAR(module_docstr, "Ce Liu's Optical Flow implementations using SOR");
 
 #if PY_VERSION_HEX >= 0x03000000
 static PyModuleDef module_definition = {
   PyModuleDef_HEAD_INIT,
-  XBOB_EXT_MODULE_NAME,
+  BOB_EXT_MODULE_NAME,
   module_docstr,
   -1,
   module_methods,
@@ -269,18 +269,18 @@ static PyObject* create_module (void) {
 # if PY_VERSION_HEX >= 0x03000000
   PyObject* m = PyModule_Create(&module_definition);
 # else
-  PyObject* m = Py_InitModule3(XBOB_EXT_MODULE_NAME, module_methods, module_docstr);
+  PyObject* m = Py_InitModule3(BOB_EXT_MODULE_NAME, module_methods, module_docstr);
 # endif
   if (!m) return 0;
   auto m_ = make_safe(m); ///< protects against early returns
 
-  if (PyModule_AddStringConstant(m, "__version__", XBOB_EXT_MODULE_VERSION) < 0)
+  if (PyModule_AddStringConstant(m, "__version__", BOB_EXT_MODULE_VERSION) < 0)
     return 0;
 
   /* imports dependencies */
-  if (import_xbob_blitz() < 0) {
+  if (import_bob_blitz() < 0) {
     PyErr_Print();
-    PyErr_Format(PyExc_ImportError, "cannot import `%s'", XBOB_EXT_MODULE_NAME);
+    PyErr_Format(PyExc_ImportError, "cannot import `%s'", BOB_EXT_MODULE_NAME);
     return 0;
   }
 
@@ -289,7 +289,7 @@ static PyObject* create_module (void) {
 
 }
 
-PyMODINIT_FUNC XBOB_EXT_ENTRY_NAME (void) {
+PyMODINIT_FUNC BOB_EXT_ENTRY_NAME (void) {
 # if PY_VERSION_HEX >= 0x03000000
   return
 # endif

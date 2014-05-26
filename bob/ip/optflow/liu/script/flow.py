@@ -49,10 +49,10 @@ __epilog__ = """examples:
 import os
 import sys
 import argparse
-import xbob.io.base
-import xbob.io.image
-import xbob.io.video
-import xbob.ip.color
+import bob.io.base
+import bob.io.image
+import bob.io.video
+import bob.ip.color
 
 class AliasedSubParsersAction(argparse._SubParsersAction):
   """Hack taken from https://gist.github.com/471779 to allow aliases in
@@ -177,7 +177,7 @@ def main(user_input=None):
         sys.stdout.write('Ok\n')
         sys.stdout.flush()
 
-      input = xbob.io.video.reader(args.input[0])[:args.frames]
+      input = bob.io.video.reader(args.input[0])[:args.frames]
 
     else:
 
@@ -185,11 +185,11 @@ def main(user_input=None):
         sys.stdout.write('Loading all frames from %s...' % args.input[0])
         sys.stdout.flush()
 
-      input = xbob.io.base.load(args.input[0])
+      input = bob.io.base.load(args.input[0])
 
   else: #assume the user passed a sequence of images
 
-    input = [xbob.io.base.load(k) for k in args.input]
+    input = [bob.io.base.load(k) for k in args.input]
 
   if args.verbose:
     sys.stdout.write('Converting %d frames to double...' % len(input))
@@ -207,7 +207,7 @@ def main(user_input=None):
       sys.stdout.write('Converting %d frames to grayscale...' % len(input))
       sys.stdout.flush()
 
-    input = [xbob.ip.color.rgb_to_gray(k) for k in input]
+    input = [bob.ip.color.rgb_to_gray(k) for k in input]
 
     if args.verbose:
       sys.stdout.write('Ok\n')
@@ -232,7 +232,7 @@ def main(user_input=None):
     sys.stdout.write('Saving flows to %s\n' % args.output)
     sys.stdout.flush()
 
-  out = xbob.io.base.HDF5File(args.output, 'w')
+  out = bob.io.base.HDF5File(args.output, 'w')
   out.set('uv', flows)
   out.set_attribute('method', args.variant, 'uv')
   out.set_attribute('alpha', args.alpha, 'uv')
