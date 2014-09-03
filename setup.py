@@ -8,7 +8,7 @@
 
 from setuptools import setup, find_packages, dist
 dist.Distribution(dict(setup_requires=['bob.blitz']))
-from bob.blitz.extension import Extension
+from bob.blitz.extension import Extension, build_ext
 
 version = '1.2.0a0'
 
@@ -31,7 +31,7 @@ setup(
       "bob",
       "bob.ip",
       "bob.ip.optflow",
-      ],
+    ],
 
     install_requires=[
       'setuptools',
@@ -45,34 +45,40 @@ setup(
     entry_points = {
       'console_scripts': [
         'bob_of_liu.py = bob.ip.optflow.liu.script.flow:main',
-        ],
-      },
+      ],
+    },
 
     ext_modules = [
       Extension("bob.ip.optflow.liu.version",
         [
           "bob/ip/optflow/liu/version.cpp",
-          ],
+        ],
         version = version,
-        ),
+      ),
+
       Extension("bob.ip.optflow.liu.sor",
         [
           "bob/ip/optflow/liu/sor_based/OpticalFlow.cpp",
           "bob/ip/optflow/liu/sor_based/GaussianPyramid.cpp",
           "bob/ip/optflow/liu/sor_based/Stochastic.cpp",
           "bob/ip/optflow/liu/sor_based/main.cpp",
-          ],
+        ],
         version = version,
-        ),
+      ),
+
       Extension("bob.ip.optflow.liu.cg",
         [
           "bob/ip/optflow/liu/cg_based/OpticalFlow.cpp",
           "bob/ip/optflow/liu/cg_based/GaussianPyramid.cpp",
           "bob/ip/optflow/liu/cg_based/main.cpp",
-          ],
+        ],
         version = version,
-        ),
-      ],
+      ),
+    ],
+
+    cmdclass = {
+      'build_ext': build_ext
+    },
 
     classifiers = [
       'Development Status :: 4 - Beta',
@@ -83,6 +89,6 @@ setup(
       'Programming Language :: Python :: 3',
       'Topic :: Scientific/Engineering :: Artificial Intelligence',
       'Topic :: Scientific/Engineering :: Image Recognition',
-      ],
+    ],
 
-    )
+)
