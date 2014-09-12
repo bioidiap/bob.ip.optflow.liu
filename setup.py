@@ -10,6 +10,9 @@ from setuptools import setup, find_packages, dist
 dist.Distribution(dict(setup_requires=['bob.extension', 'bob.blitz']))
 from bob.blitz.extension import Extension, build_ext
 
+from bob.extension.utils import load_requirements
+build_requires = load_requirements()
+
 version = '1.2.0a0'
 
 setup(
