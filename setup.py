@@ -7,7 +7,7 @@
 """
 
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires=['bob.blitz']))
+dist.Distribution(dict(setup_requires=['bob.extension', 'bob.blitz']))
 from bob.blitz.extension import Extension, build_ext
 
 version = '1.2.0a0'
@@ -33,14 +33,8 @@ setup(
       "bob.ip.optflow",
     ],
 
-    install_requires=[
-      'setuptools',
-      'bob.blitz',
-      'bob.io.base',
-      'bob.io.image',
-      'bob.io.video',
-      'bob.ip.color',
-    ],
+    setup_requires = build_requires,
+    install_requires = build_requires,
 
     entry_points = {
       'console_scripts': [
