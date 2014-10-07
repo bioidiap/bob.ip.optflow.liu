@@ -2,16 +2,21 @@ language: python
 matrix:
   include:
   - python: 2.6
+    env:
+    - MAX_CONCURRENCY=1
   - python: 2.7
     env:
     - secure: LO1nhhRWhoKkEd6s4in6VWF/6MDtkPmQJ+Wq8bI9SOZprOhmV448rQTlJLhYLHKdipONZI4F7m7w+slmRjFMTvr6WBkNFYKPf0bgTaPfMWTXHZifKYTavTZyc3eTEhvFxQY/eBTEdOOkafqU2EkkWB0yZbi7b+a9M5ZaRDT1/V8=
     - secure: ftJqjYDlLT6/Y9ZvBNfJmf6RRtZzjd8kGR5ek+vPdOcwoPX4sWUDlJTlN33dc5wHjruKFjOy4Zy12ICQrJ6Si+nWsLeBh0wc6t6oh+HiZekXMetkxtf5ldDr00UEXqPJqTPIVX1s6gQpibPv8gGf9BdfRZ+HhvgH1pZy6Da8zP0=
+    - MAX_CONCURRENCY=1
   - python: 3.2
     env:
     - NUMPYSPEC===1.7.1
+    - MAX_CONCURRENCY=1
   - python: 3.3
     env:
     - NUMPYSPEC===1.8.0
+    - MAX_CONCURRENCY=1
 before_install:
 - sudo add-apt-repository -y ppa:biometrics/bob
 - sudo apt-get update -qq
@@ -21,8 +26,8 @@ before_install:
 - sudo apt-get install -qq --force-yes python-imaging
 - if [ -n "${NUMPYSPEC}" ]; then sudo apt-get install -qq --force-yes libatlas-dev libatlas-base-dev liblapack-dev gfortran; fi
 - if [ -n "${NUMPYSPEC}" ]; then pip install --upgrade pip setuptools; fi
-- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC sphinx nose==1.3.0 jinja2==2.6; fi
-- pip install cpp-coveralls
+- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC; fi
+- pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel sphinx nose==1.3.0 jinja2==2.6 pillow cpp-coveralls
 install:
 - python bootstrap.py
 - CFLAGS=-coverage ./bin/buildout
