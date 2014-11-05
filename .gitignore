@@ -1,6 +1,8 @@
 *~
 *.swp
 *.pyc
+*.so
+*.dylib
 bin
 eggs
 parts
@@ -10,12 +12,8 @@ parts
 develop-eggs
 sphinx
 dist
-.project
-.pydevproject
-build
-*.so
-reference/
-*.mex*
-src/
-xbob.extension*.egg
+.nfs*
 .gdb_history
+build
+*.egg
+src/
