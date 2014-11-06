@@ -13,7 +13,8 @@ from bob.blitz.extension import Extension, build_ext
 from bob.extension.utils import load_requirements
 build_requires = load_requirements()
 
-version = '1.2.0a0'
+# Define package version
+version = open("version.txt").read().rstrip()
 
 setup(
 
