@@ -327,7 +327,7 @@ namespace cg {
 
       if(nElements!=other.nElements)
       {
-        nElements=other.nElements;		
+        nElements=other.nElements;
         if(pData!=NULL)
           delete []pData;
         pData=NULL;
@@ -552,7 +552,7 @@ namespace cg {
   //------------------------------------------------------------------------------------------
   template <class T>
     template <class T1>
-    void Image<T>::GaussianSmoothing(Image<T1>& image,double sigma,int fsize) const 
+    void Image<T>::GaussianSmoothing(Image<T1>& image,double sigma,int fsize) const
     {
       Image<T1> foo;
       // constructing the 1D gaussian filter
@@ -571,7 +571,7 @@ namespace cg {
       // apply filtering
       imfilter_hv(image,gFilter,fsize,gFilter,fsize);
 
-      delete gFilter;
+      delete[] gFilter;
     }
 
   //------------------------------------------------------------------------------------------
@@ -582,7 +582,7 @@ namespace cg {
     template <class T1>
     void Image<T>::smoothing(Image<T1>& image,double factor)
     {
-      // build 
+      // build
       double filter2D[9]={1,0,1,0, 0, 0,1, 0,1};
       filter2D[1]=filter2D[3]=filter2D[5]=filter2D[7]=factor;
       filter2D[4]=factor*factor;
@@ -661,7 +661,7 @@ namespace cg {
       pTempBuffer=new T1[nElements];
       ImageProcessing::hfiltering(pData,pTempBuffer,imWidth,imHeight,nChannels,hfilter,hfsize);
       ImageProcessing::vfiltering(pTempBuffer,image.data(),imWidth,imHeight,nChannels,vfilter,vfsize);
-      delete pTempBuffer;
+      delete[] pTempBuffer;
     }
 
   //------------------------------------------------------------------------------------------
@@ -902,7 +902,7 @@ namespace cg {
       const T1*& pData1=image1.data();
       const T2*& pData2=image2.data();
       for(int i=0;i<nElements;i++)
-        pData[i]=pData1[i]+pData2[i];	
+        pData[i]=pData1[i]+pData2[i];
     }
 
   template <class T>
@@ -920,7 +920,7 @@ namespace cg {
       const T1*& pData1=image1.data();
       const T2*& pData2=image2.data();
       for(int i=0;i<nElements;i++)
-        pData[i]=pData1[i]+pData2[i]*ratio;	
+        pData[i]=pData1[i]+pData2[i]*ratio;
     }
 
   template <class T>
@@ -934,7 +934,7 @@ namespace cg {
       }
       const T1*& pData1=image1.data();
       for(int i=0;i<nElements;i++)
-        pData[i]+=pData1[i]*ratio;	
+        pData[i]+=pData1[i]*ratio;
     }
 
   template <class T>

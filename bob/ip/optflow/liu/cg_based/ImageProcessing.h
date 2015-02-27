@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------
 // class to handle basic image processing functions
 // this is a collection of template functions. These template functions are
-// used in other image classes such as BiImage, IntImage and FImage 
+// used in other image classes such as BiImage, IntImage and FImage
 //----------------------------------------------------------------------------------
 
 namespace cg {
@@ -26,7 +26,7 @@ namespace cg {
       //---------------------------------------------------------------------------------
       // function to interpolate the image plane
       //---------------------------------------------------------------------------------
-      template <class T1,class T2> 
+      template <class T1,class T2>
         static inline void BilinearInterpolate(const T1* pImage,int width,int height,int nChannels,double x,double y,T2* result);
 
       template <class T1,class T2>
@@ -70,7 +70,7 @@ namespace cg {
       //---------------------------------------------------------------------------------
 
       //---------------------------------------------------------------------------------
-      // function to generate a 2D Gaussian 
+      // function to generate a 2D Gaussian
       //---------------------------------------------------------------------------------
       template <class T>
         static void generate2DGaussian(T*& pImage,int wsize,double sigma=-1);
@@ -105,7 +105,7 @@ namespace cg {
 
   //------------------------------------------------------------------------------------------------------------
   // this is the most general function for reszing an image with a varying nChannels
-  // bilinear interpolation is used for now. It might be replaced by other (bicubic) interpolation methods 
+  // bilinear interpolation is used for now. It might be replaced by other (bicubic) interpolation methods
   //------------------------------------------------------------------------------------------------------------
   template <class T1,class T2>
     void ImageProcessing::ResizeImage(const T1* pSrcImage,T2* pDstImage,int SrcWidth,int SrcHeight,int nChannels,double Ratio)
@@ -226,7 +226,7 @@ namespace cg {
           for(k=0;k<nChannels;k++)
             pDstImage[offset+k]=pBuffer[k];
         }
-      delete pBuffer;
+      delete[] pBuffer;
     }
 
   //------------------------------------------------------------------------------------------------------------

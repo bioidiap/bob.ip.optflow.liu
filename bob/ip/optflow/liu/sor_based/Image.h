@@ -1101,7 +1101,7 @@ namespace sor {
       // apply filtering
       imfilter_hv(image,gFilter,fsize,gFilter,fsize);
 
-      delete gFilter;
+      delete[] gFilter;
     }
 
   //------------------------------------------------------------------------------------------
@@ -1232,7 +1232,7 @@ namespace sor {
       pTempBuffer=new T1[nElements];
       ImageProcessing::hfiltering(pData,pTempBuffer,imWidth,imHeight,nChannels,hfilter,hfsize);
       ImageProcessing::vfiltering(pTempBuffer,image.data(),imWidth,imHeight,nChannels,vfilter,vfsize);
-      delete pTempBuffer;
+      delete[] pTempBuffer;
     }
 
   template <class T>
