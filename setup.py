@@ -31,11 +31,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
 
-    namespace_packages=[
-      "bob",
-      "bob.ip",
-      "bob.ip.optflow",
-    ],
+
 
     setup_requires = build_requires,
     install_requires = build_requires,
