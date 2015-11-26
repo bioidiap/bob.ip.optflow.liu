@@ -6,7 +6,7 @@
    :target: http://pythonhosted.org/bob.ip.optflow.liu/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.png
    :target: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.ip.optflow.liu/master/index.html
-.. image:: https://travis-ci.org/bioidiap/bob.ip.optflow.liu.svg?branch=v2.0.5
+.. image:: https://travis-ci.org/bioidiap/bob.ip.optflow.liu.svg?branch=master
    :target: https://travis-ci.org/bioidiap/bob.ip.optflow.liu
 .. image:: https://coveralls.io/repos/bioidiap/bob.ip.optflow.liu/badge.png
    :target: https://coveralls.io/r/bioidiap/bob.ip.optflow.liu
