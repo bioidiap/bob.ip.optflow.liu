@@ -267,17 +267,19 @@ static PyModuleDef module_definition = {
 static PyObject* create_module (void) {
 
 # if PY_VERSION_HEX >= 0x03000000
-  PyObject* m = PyModule_Create(&module_definition);
+  PyObject* module = PyModule_Create(&module_definition);
+  auto module_ = make_xsafe(module);
+  const char* ret = "O";
 # else
-  PyObject* m = Py_InitModule3(BOB_EXT_MODULE_NAME, module_methods, module_docstr);
+  PyObject* module = Py_InitModule3(BOB_EXT_MODULE_NAME, module_methods, module_docstr);
+  const char* ret = "N";
 # endif
-  if (!m) return 0;
-  auto m_ = make_safe(m); ///< protects against early returns
+  if (!module) return 0;
 
   /* imports dependencies */
   if (import_bob_blitz() < 0) return 0;
 
-  return Py_BuildValue("O", m);
+  return Py_BuildValue(ret, module);
 }
 
 PyMODINIT_FUNC BOB_EXT_ENTRY_NAME (void) {
