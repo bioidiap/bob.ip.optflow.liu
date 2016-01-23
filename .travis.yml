@@ -18,9 +18,9 @@ before_install:
 - sudo apt-get install -qq --force-yes libboost-all-dev libblitz1-dev libhdf5-serial-dev texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
 - sudo apt-get install -qq --force-yes libjpeg8-dev libnetpbm10-dev libpng12-dev libtiff4-dev libgif-dev python-imaging
 - sudo apt-get install -qq --force-yes libavcodec-dev libavformat-dev libswscale-dev libatlas-dev libatlas-base-dev liblapack-dev
-- pip install --upgrade pip
-- pip install --find-links https://www.idiap.ch/software/bob/wheels/travis/ --use-wheel sphinx nose numpy pillow coverage cpp-coveralls
-- pip install --find-links https://www.idiap.ch/software/bob/wheels/travis/ --use-wheel --pre -r requirements.txt coveralls
+- pip install --quiet --upgrade pip
+- pip install --quiet --find-links https://www.idiap.ch/software/bob/wheels/travis/ --use-wheel sphinx nose numpy pillow coverage cpp-coveralls
+- pip install --quiet --find-links https://www.idiap.ch/software/bob/wheels/travis/ --use-wheel --pre -r requirements.txt coveralls
 install:
 - python bootstrap-buildout.py
 - CPPFLAGS=--coverage LDFLAGS=--coverage ./bin/buildout buildout:debug=false buildout:develop=. buildout:extensions=bob.buildout buildout:auto-checkout=
