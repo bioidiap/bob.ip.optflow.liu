@@ -20,18 +20,16 @@ setup(
 
     name="bob.ip.optflow.liu",
     version=version,
-    description="Python bindings to the optical flow framework by C. Liu",
-    license="GPLv3",
+    description="Ce Liu's Optical Flow Framework for Bob",
+    license="BSD",
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
     long_description=open('README.rst').read(),
-    url='https://github.com/bioidiap/bob.ip.optflow.liu',
+    url='https://gitlab.idiap.ch/bob/bob.ip.optflow.liu',
 
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-
-
 
     setup_requires = build_requires,
     install_requires = build_requires,
@@ -78,7 +76,7 @@ setup(
       'Framework :: Bob',
       'Development Status :: 4 - Beta',
       'Intended Audience :: Developers',
-      'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+      'License :: OSI Approved :: BSD License',
       'Natural Language :: English',
       'Programming Language :: Python',
       'Programming Language :: Python :: 3',
