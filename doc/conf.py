@@ -25,6 +25,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    #'matplotlib.sphinxext.plot_directive'
     ]
 
 import sphinx
@@ -131,7 +132,7 @@ pygments_style = 'sphinx'
 
 # Some variables which are useful for generated material
 project_variable = project.replace('.', '_')
-short_description = u'Ce Liu's Optical Flow Framework for Bob'
+short_description = u'Ce Liu\'s Optical Flow Framework for Bob'
 owner = [u'Idiap Research Institute']
 
 
@@ -239,9 +240,12 @@ autodoc_default_flags = [
 from bob.extension.utils import link_documentation, load_requirements
 sphinx_requirements = "extra-intersphinx.txt"
 if os.path.exists(sphinx_requirements):
-    intersphinx_mapping = link_documentation(additional_packages=load_requirements(sphinx_requirements))
+  intersphinx_mapping = link_documentation(
+      additional_packages=['python','numpy'] + \
+          load_requirements(sphinx_requirements)
+          )
 else:
-    intersphinx_mapping = link_documentation()
+  intersphinx_mapping = link_documentation()
 
 
 # We want to remove all private (i.e. _. or __.__) members

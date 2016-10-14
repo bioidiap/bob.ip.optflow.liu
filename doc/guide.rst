@@ -74,9 +74,13 @@ I have detected inconsistencies between output produced by these pythonic bindin
 In all instances, these differences come from differences in either the gray-scaling conversion and/or the decompression routines for the test images and movies.
 Once a precise input is given in double-precision gray-scale, both bindings (ours and Ce Liu's Matlab ones) give out **exactly** the same output.
 
-This means that you should expect precision problems if you feed in videos or lossy input formats such as JPEG images.
-If you input HDF5 files (e.g. using :ref:`bob.io.base <bob.io.base>`), Matlab ``.mat`` files (e.g. using :ref:`bob.io.matlab <bob.io.matlab>`) or any other data in formats which are **not** subject to lossy
-compression/decompression, this data is pre-grayscaled **and** stored in double-precision floating point numbers, the output is consistently the same, no matter which environment you use.
+This means that you should expect precision problems if you feed in videos or
+lossy input formats such as JPEG images.  If you input HDF5 files (e.g. using
+:py:mod:`bob.io.base`), Matlab ``.mat`` files (e.g. using
+:py:mod:`bob.io.matlab`) or any other data in formats which are **not** subject
+to lossy compression/decompression, this data is pre-grayscaled **and** stored
+in double-precision floating point numbers, the output is consistently the
+same, no matter which environment you use.
 
 If you input data which is not double-precision gray-scale, then it is (1) converted to double-precision representation and then (2) gray-scaled.
 These steps are taken in this order in both bindings.
@@ -93,12 +97,15 @@ The new framework is presumably faster, but does not give similar results compar
 If you would like to give it a spin, use the method :py:func:`bob.ip.optflow.liu.sor.flow` instead of py:func:`bob.ip.optflow.liu.cg.flow` as shown above.
 Notice that the defaults for both implementations are different, following the defaults pre-set in the Matlab MEX code in the different releases.
 
-Particularly, avoid feeding colored images to :py:func:`bob.ip.optflow.liu.sor.flow`.
-While that works OK with :py:func:`bob.ip.opflow.liu.cg.flow`, :py:func:`bob.ip.opflow.liu.cg.sor.flow` gives inconsistent results everytime it is run.
-I recommend gray-scaling images before using :py:func:`bob.ip.opflow.liu.cg.sor.flow`, e.g., by converting them using :py:func:`bob.ip.color.rgb_to_gray`.
-With that, results are at least consistent between runs.
-I'm not sure about their correctness.
-Ce Liu has been informed and should be working on it soon enough (today is 14.Nov.2012).
+Particularly, avoid feeding colored images to
+:py:func:`bob.ip.optflow.liu.sor.flow`.  While that works OK with
+:py:func:`bob.ip.optflow.liu.cg.flow`, :py:func:`bob.ip.optflow.liu.sor.flow`
+gives inconsistent results everytime it is run. I recommend gray-scaling
+images before using :py:func:`bob.ip.optflow.liu.sor.flow`, e.g., by
+converting them using :py:func:`bob.ip.color.rgb_to_gray`. With that, results
+are at least consistent between runs.  I'm not sure about their correctness.
+Ce Liu has been informed and should be working on it soon enough (today is
+14.Nov.2012).
 
 To access this implementation, use :py:func:`bob.ip.optflow.liu.sor.flow`.
 
