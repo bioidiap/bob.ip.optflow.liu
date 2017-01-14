@@ -1,17 +1,17 @@
 .. vim: set fileencoding=utf-8 :
 .. Mon 15 Aug 2016 18:41:03 CEST
 
-.. image:: http://img.shields.io/badge/docs-stable-yellow.png
+.. image:: http://img.shields.io/badge/docs-stable-yellow.svg
    :target: http://pythonhosted.org/bob.ip.optflow.liu/index.html
-.. image:: http://img.shields.io/badge/docs-latest-orange.png
+.. image:: http://img.shields.io/badge/docs-latest-orange.svg
    :target: https://www.idiap.ch/software/bob/docs/latest/bob/bob.ip.optflow.liu/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/commits/master
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu
-.. image:: http://img.shields.io/pypi/v/bob.ip.optflow.liu.png
+.. image:: http://img.shields.io/pypi/v/bob.ip.optflow.liu.svg
    :target: https://pypi.python.org/pypi/bob.ip.optflow.liu
-.. image:: http://img.shields.io/pypi/dm/bob.ip.optflow.liu.png
+.. image:: http://img.shields.io/pypi/dm/bob.ip.optflow.liu.svg
    :target: https://pypi.python.org/pypi/bob.ip.optflow.liu
 
 
@@ -53,6 +53,6 @@ development `mailing list`_.
 
 .. Place your references here:
 .. _bob: https://www.idiap.ch/software/bob
-.. _installation: https://gitlab.idiap.ch/bob/bob/wikis/Installation
+.. _installation: https://www.idiap.ch/software/bob/install
 .. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
 .. _liu's homepage: http://people.csail.mit.edu/celiu/OpticalFlow
