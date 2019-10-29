@@ -1,14 +1,14 @@
 .. vim: set fileencoding=utf-8 :
 .. Mon 15 Aug 2016 18:41:03 CEST
 
-.. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: https://www.idiap.ch/software/bob/docs/bob/bob.ip.optflow.liu/stable/index.html
+.. image:: http://img.shields.io/badge/docs-v2.0.16-yellow.svg
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.ip.optflow.liu/v2.0.16/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.svg
    :target: https://www.idiap.ch/software/bob/docs/bob/bob.ip.optflow.liu/master/index.html
-.. image:: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/badges/master/build.svg
-   :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/commits/master
-.. image:: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/badges/master/coverage.svg
-   :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/commits/master
+.. image:: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/badges/v2.0.16/build.svg
+   :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/commits/v2.0.16
+.. image:: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/badges/v2.0.16/coverage.svg
+   :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu/commits/v2.0.16
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.ip.optflow.liu
 .. image:: http://img.shields.io/pypi/v/bob.ip.optflow.liu.svg
