@@ -76,8 +76,7 @@ Once a precise input is given in double-precision gray-scale, both bindings (our
 
 This means that you should expect precision problems if you feed in videos or
 lossy input formats such as JPEG images.  If you input HDF5 files (e.g. using
-:py:mod:`bob.io.base`), Matlab ``.mat`` files (e.g. using
-:py:mod:`bob.io.matlab`) or any other data in formats which are **not** subject
+:py:mod:`bob.io.base`) or any other data in formats which are **not** subject
 to lossy compression/decompression, this data is pre-grayscaled **and** stored
 in double-precision floating point numbers, the output is consistently the
 same, no matter which environment you use.
